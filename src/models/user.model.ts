@@ -1,20 +1,25 @@
 import mongoose from "mongoose";
 
+import { AccountType } from "../enums/accountType.enum";
+import { IUser } from "../interfaces/user.interface";
+
 const userSchema = new mongoose.Schema(
   {
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
 
-    role: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Role",
-      required: true,
-    },
+    roles: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Role",
+        required: true,
+      },
+    ],
 
     accountType: {
       type: String,
-      enum: ["basic", "premium"],
-      default: "basic",
+      enum: Object.values(AccountType),
+      default: AccountType.BASIC,
     },
 
     isBanned: {
@@ -25,4 +30,4 @@ const userSchema = new mongoose.Schema(
   { timestamps: true, versionKey: false },
 );
 
-export const User = mongoose.model("User", userSchema);
+export const User = mongoose.model<IUser>("User", userSchema);

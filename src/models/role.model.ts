@@ -1,5 +1,7 @@
 import mongoose from "mongoose";
 
+import { IRole } from "../interfaces/role.interface";
+
 const roleSchema = new mongoose.Schema(
   {
     name: {
@@ -11,4 +13,4 @@ const roleSchema = new mongoose.Schema(
   { timestamps: true, versionKey: false },
 );
 
-export const Role = mongoose.model("Role", roleSchema);
+export const Role = mongoose.model<IRole>("Role", roleSchema);

@@ -9,11 +9,13 @@ import { permissions, roles } from "./data";
 dotenv.config();
 
 const MONGO_URL = process.env.MONGO_URL || "";
+
 export const seedDatabase = async () => {
   try {
     await mongoose.connect(MONGO_URL);
     console.log("Connected to Mongo for seeding");
 
+    // Create permissions
     for (const permissionName of permissions) {
       const exists = await Permission.findOne({ name: permissionName });
 
@@ -22,6 +24,8 @@ export const seedDatabase = async () => {
         console.log(`Permission created: ${permissionName}`);
       }
     }
+
+    // Create roles
     for (const roleName of roles) {
       const exists = await Role.findOne({ name: roleName });
 
@@ -30,6 +34,7 @@ export const seedDatabase = async () => {
         console.log(`Role created: ${roleName}`);
       }
     }
+
     const allRoles = await Role.find();
     const allPermissions = await Permission.find();
 
@@ -42,6 +47,7 @@ export const seedDatabase = async () => {
 
         if (rolePermissionExists) continue;
 
+        // ADMIN — всё
         if (role.name === "admin") {
           await RolePermission.create({
             role: role._id,
@@ -49,18 +55,40 @@ export const seedDatabase = async () => {
           });
         }
 
-        if (role.name === "manager" && permission.name !== "manage_roles") {
+        // MANAGER
+        if (
+          role.name === "manager" &&
+          ["view_ad", "delete_any_ad", "ban_user", "view_stats"].includes(
+            permission.name,
+          )
+        ) {
           await RolePermission.create({
             role: role._id,
             permission: permission._id,
           });
         }
 
+        // SELLER
         if (
           role.name === "seller" &&
-          ["create_ad", "edit_own_ad", "delete_own_ad"].includes(
-            permission.name,
-          )
+          [
+            "view_ad",
+            "contact_seller",
+            "create_ad",
+            "edit_own_ad",
+            "delete_own_ad",
+          ].includes(permission.name)
+        ) {
+          await RolePermission.create({
+            role: role._id,
+            permission: permission._id,
+          });
+        }
+
+        // BUYER
+        if (
+          role.name === "buyer" &&
+          ["view_ad", "contact_seller"].includes(permission.name)
         ) {
           await RolePermission.create({
             role: role._id,
@@ -71,9 +99,12 @@ export const seedDatabase = async () => {
     }
 
     console.log("Seeding completed");
+
+    await mongoose.disconnect();
     process.exit(0);
   } catch (error) {
     console.error("Seed error:", error);
+    await mongoose.disconnect();
     process.exit(1);
   }
 };

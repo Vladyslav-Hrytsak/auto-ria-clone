@@ -1,5 +1,7 @@
 import mongoose from "mongoose";
 
+import { IRolePermission } from "../interfaces/rolePermission.interface";
+
 const rolePermissionSchema = new mongoose.Schema(
   {
     role: {
@@ -16,7 +18,7 @@ const rolePermissionSchema = new mongoose.Schema(
   { versionKey: false },
 );
 
-export const RolePermission = mongoose.model(
+export const RolePermission = mongoose.model<IRolePermission>(
   "RolePermission",
   rolePermissionSchema,
 );
