@@ -17,3 +17,8 @@ export interface IUser extends Document {
   createdAt: Date;
   updatedAt: Date;
 }
+
+export type IUserResponse = Pick<
+  IUser,
+  "_id" | "email" | "roles" | "accountType" | "isBanned"
+>;
