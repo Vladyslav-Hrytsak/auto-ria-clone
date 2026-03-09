@@ -4,12 +4,14 @@ import mongoose from "mongoose";
 import { config } from "./config/configs";
 import { ApiError } from "./errors/api-error";
 import { authRouter } from "./routes/auth.routes";
+import { brandRouter } from "./routes/brand.router";
 
 const app = express();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use("/auth", authRouter);
+app.use("/brands", brandRouter);
 
 process.on("uncaughtException", (err: Error) => {
   console.error("uncaughtException", err.message, err.stack);

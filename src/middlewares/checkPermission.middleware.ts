@@ -1,25 +1,25 @@
 import { NextFunction, Request, Response } from "express";
 
 import { ApiError } from "../errors/api-error";
-import { RolePermission } from "../models/rolePermission.model";
+import { permissionService } from "../services/permission.service";
 
-export const checkPermission = (requiredPermission: string) => {
+export const checkPermission = (requiredPermissions: string[]) => {
   return async (req: Request, res: Response, next: NextFunction) => {
     try {
       if (!req.user) {
-        return next(new ApiError("Unauthorized", 401));
+        throw new ApiError("Unauthorized", 401);
       }
-      const userRoles = req.user.roles;
-      const rolePermissions = await RolePermission.find({
-        role: { $in: userRoles },
-      }).populate("permission");
 
-      const hasPermission = rolePermissions.some(
-        (rp: any) => rp.permission.name === requiredPermission,
+      const permissions = await permissionService.getPermissionsByRoles(
+        req.user.roles,
+      );
+
+      const hasPermission = requiredPermissions.every((permission) =>
+        permissions.includes(permission),
       );
 
       if (!hasPermission) {
-        return next(new ApiError("Forbidden", 403));
+        throw new ApiError("Forbidden", 403);
       }
 
       next();

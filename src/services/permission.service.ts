@@ -1,10 +1,19 @@
+import { Types } from "mongoose";
+
+import { IRolePermission } from "../interfaces/rolePermission.interface";
 import { permissionRepository } from "../repositories/permission.repository";
 
 class PermissionService {
-  public async getPermissionsByRoles(roleIds: string[]) {
-    const rolePermissions = await permissionRepository.findPermission(roleIds);
+  public async getPermissionsByRoles(
+    roleIds: Types.ObjectId[],
+  ): Promise<string[]> {
+    const rolePermissions: IRolePermission[] =
+      await permissionRepository.findPermissionsByRoles(roleIds);
 
-    return rolePermissions.map((rp: any) => rp.permission.name);
+    return rolePermissions.map((rp) => {
+      const permission = rp.permission as any;
+      return permission.name;
+    });
   }
 }
 

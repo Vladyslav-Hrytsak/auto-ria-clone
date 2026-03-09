@@ -1,0 +1,6 @@
+export enum ListingStatus {
+  PENDING = "PENDING",
+  ACTIVE = "ACTIVE",
+  REJECTED = "REJECTED",
+  INACTIVE = "INACTIVE",
+}
