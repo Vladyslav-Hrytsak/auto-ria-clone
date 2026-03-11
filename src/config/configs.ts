@@ -13,4 +13,10 @@ export const config = {
   JWT_REFRESH_EXPIRATION: process.env.JWT_REFRESH_EXPIRATION || 1,
 
   MAX_SESSIONS: process.env.MAX_SESSIONS || 5,
+
+  PRIVAT_BANK_API: process.env.PRIVAT_BANK_API,
+
+  SENDGRID_API_KEY: process.env.SENDGRID_API_KEY,
+  SENDGRID_FROM_EMAIL: process.env.SENDGRID_FROM_EMAIL,
+  MANAGER_EMAIL: process.env.MANAGER_EMAIL,
 };

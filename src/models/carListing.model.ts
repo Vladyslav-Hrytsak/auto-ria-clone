@@ -25,6 +25,22 @@ const CarListingSchema = new Schema<ICarListing>(
       required: true,
     },
 
+    year: {
+      type: Number,
+      required: true,
+      index: true,
+    },
+
+    mileage: {
+      type: Number,
+    },
+
+    images: [
+      {
+        type: String,
+      },
+    ],
+
     price: {
       type: Number,
       required: true,
@@ -36,20 +52,9 @@ const CarListingSchema = new Schema<ICarListing>(
       required: true,
     },
 
-    priceUSD: {
-      type: Number,
-      required: true,
-    },
-
-    priceEUR: {
-      type: Number,
-      required: true,
-    },
-
-    priceUAH: {
-      type: Number,
-      required: true,
-    },
+    priceUSD: { type: Number, required: true },
+    priceEUR: { type: Number, required: true },
+    priceUAH: { type: Number, required: true },
 
     exchangeRate: {
       type: Number,
@@ -60,6 +65,10 @@ const CarListingSchema = new Schema<ICarListing>(
       type: String,
       required: true,
       index: true,
+    },
+
+    city: {
+      type: String,
     },
 
     description: {
@@ -73,11 +82,6 @@ const CarListingSchema = new Schema<ICarListing>(
       enum: Object.values(ListingStatus),
       default: ListingStatus.PENDING,
       index: true,
-    },
-
-    views: {
-      type: Number,
-      default: 0,
     },
 
     editAttempts: {

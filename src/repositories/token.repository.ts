@@ -1,22 +1,52 @@
-import { Types } from "mongoose";
+import { QueryFilter, Types } from "mongoose";
 
 import { IToken } from "../interfaces/token.interface";
 import { Token } from "../models/token.model";
 
 class TokenRepository {
-  public async create(data: {
-    user: Types.ObjectId;
-    refreshToken: string;
-    expiresAt: Date;
-  }): Promise<IToken> {
-    return await Token.create(data);
+  public async create(dto: Partial<IToken>): Promise<IToken> {
+    return await Token.create(dto);
   }
-
-  public async findByRefreshToken(
-    refreshToken: string,
+  public async findByParams(
+    params: QueryFilter<IToken>,
   ): Promise<IToken | null> {
-    return await Token.findOne({ refreshToken });
+    return await Token.findOne(params);
   }
+  public async deleteById(id: string): Promise<void> {
+    await Token.deleteOne({ _id: id });
+  }
+  public async deleteManyByUserId(userId: string): Promise<void> {
+    await Token.deleteMany({ _userId: userId });
+  }
+  public async deleteManyByParams(params: QueryFilter<IToken>): Promise<void> {
+    await Token.deleteMany(params);
+  }
+  public async deleteBeforeDate(date: Date): Promise<number> {
+    const { deletedCount } = await Token.deleteMany({
+      createdAt: { $lt: date },
+    });
+    return deletedCount;
+  }
+  public async getActiveUserIds(sinceDate: Date): Promise<string[]> {
+    const activeUserIds = await Token.find({
+      updatedAt: { $gte: sinceDate },
+    }).distinct("_userId");
+
+    return activeUserIds.map((id) => id.toString());
+  }
+  // public async create(data: {
+  //   user: Types.ObjectId;
+  //   refreshToken: string;
+  //   expiresAt: Date;
+  // }): Promise<IToken> {
+  //   return await Token.create(data);
+  // }
+  //
+  // public async findByRefreshToken(
+  //   refreshToken: string,
+  // ): Promise<IToken | null> {
+  //   return await Token.findOne({ refreshToken });
+  // }
 
   public async revokeToken(refreshToken: string): Promise<IToken | null> {
     return await Token.findOneAndUpdate(

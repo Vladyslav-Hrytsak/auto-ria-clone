@@ -1,7 +1,10 @@
 import { Document, Types } from "mongoose";
 
+import { RolesEnum } from "../enums/roles.enum";
+
 export interface IToken extends Document {
   user: Types.ObjectId;
+  accessToken: string;
   refreshToken: string;
   isRevoked: boolean;
   expiresAt: Date;
@@ -9,17 +12,9 @@ export interface IToken extends Document {
   updatedAt: Date;
 }
 
-export interface IAccessTokenPayload {
-  id: string;
-  roles: string[];
-  iat: number;
-  exp: number;
-}
-
-export interface IRefreshTokenPayload {
-  id: string;
-  iat: number;
-  exp: number;
+export interface ITokenPayload {
+  userId: string;
+  role: RolesEnum;
 }
 
 export interface ITokenPair {

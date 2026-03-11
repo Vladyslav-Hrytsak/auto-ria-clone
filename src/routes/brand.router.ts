@@ -6,6 +6,6 @@ const router = Router();
 
 router.get("/", brandController.getAllBrands);
 
-router.get("/:brandId/models", brandController.getModelsByBrand);
+router.get("/models/:brandId", brandController.getModelsByBrand);
 
 export const brandRouter = router;

@@ -7,23 +7,20 @@ export interface ICarListing {
   seller: Types.ObjectId;
   brand: Types.ObjectId;
   model: Types.ObjectId;
-
+  year: number;
+  mileage?: number;
+  images: string[];
   price: number;
   currency: Currency;
-
   priceUSD: number;
   priceEUR: number;
   priceUAH: number;
-
   exchangeRate: number;
-
   region: string;
-
+  city?: string;
   description: string;
-
   status: ListingStatus;
-
-  views: number;
-
   editAttempts: number;
+  createdAt: Date;
+  updatedAt: Date;
 }

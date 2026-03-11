@@ -1,71 +1,44 @@
 import { config } from "../config/configs";
+import { TOKEN_EXPIRATION } from "../constants/constants";
 import { AccountType } from "../enums/accountType.enum";
+import { RolesEnum } from "../enums/roles.enum";
+import { SellerTypeEnum } from "../enums/sellerType.enum";
+import { TokenTypeEnum } from "../enums/token-type.enum";
 import { ApiError } from "../errors/api-error";
 import { RegisterDto } from "../interfaces/registerDto.interface";
-import {
-  IRefreshTokenPayload,
-  ITokenPair,
-} from "../interfaces/token.interface";
-import { IUser } from "../interfaces/user.interface";
 import { Role } from "../models/role.model";
 import { tokenRepository } from "../repositories/token.repository";
 import { userRepository } from "../repositories/user.repository";
-import { jwtService } from "./jwt.service";
 import { passwordService } from "./password.service";
+import { tokenService } from "./token.service";
 
 class AuthService {
   public async register(data: RegisterDto) {
-    const { email, password, role } = data;
+    const { email, password, name, phone, sellerType, avatar } = data;
 
-    const existingUser = await userRepository.findByEmail(email);
+    const normalizedEmail = email.toLowerCase().trim();
+
+    const existingUser = await userRepository.findByEmail(normalizedEmail);
 
     if (existingUser) {
       throw new ApiError("User already exists", 400);
     }
 
-    const roleEntity = await Role.findOne({ name: role });
-
-    if (!roleEntity) {
-      throw new ApiError("Role not found", 404);
-    }
+    const roleEntity = await Role.findOne({ name: "seller" });
 
     const hashedPassword = await passwordService.hash(password);
 
     const user = await userRepository.createUser({
-      email,
+      email: normalizedEmail,
       password: hashedPassword,
+      name,
+      phone: phone ?? null,
+      sellerType: sellerType ?? SellerTypeEnum.PRIVATE,
+      avatar: avatar ?? null,
       roles: [roleEntity._id],
       accountType: AccountType.BASIC,
     });
-
-    const tokenPair = this.generateTokenPair(user);
-
-    const decoded = jwtService.verifyRefreshToken(
-      tokenPair.refreshToken,
-    ) as IRefreshTokenPayload;
-
-    await tokenRepository.create({
-      user: user._id,
-      refreshToken: tokenPair.refreshToken,
-      expiresAt: new Date(decoded.exp * 1000),
-    });
-
-    return {
-      ...tokenPair,
-      user: {
-        id: user._id,
-        email: user.email,
-        roles: user.roles,
-        accountType: user.accountType,
-      },
-    };
-  }
-
-  private generateTokenPair(user: IUser): ITokenPair {
-    return {
-      accessToken: jwtService.generateAccessToken(user),
-      refreshToken: jwtService.generateRefreshToken(user),
-    };
+    return user;
   }
 
   public async login(email: string, password: string) {
@@ -87,16 +60,16 @@ class AuthService {
       await tokenRepository.deleteOldestToken(user._id);
     }
 
-    const tokenPair = this.generateTokenPair(user);
-
-    const decoded = jwtService.verifyRefreshToken(
-      tokenPair.refreshToken,
-    ) as IRefreshTokenPayload;
+    const tokenPair = tokenService.generateTokens({
+      userId: user._id.toString(),
+      role: user.roles[0].toString() as unknown as RolesEnum,
+    });
+    const expiresAt = new Date(Date.now() + TOKEN_EXPIRATION.REFRESH.MS);
 
     await tokenRepository.create({
       user: user._id,
       refreshToken: tokenPair.refreshToken,
-      expiresAt: new Date(decoded.exp * 1000),
+      expiresAt: expiresAt,
     });
 
     return {
@@ -110,58 +83,64 @@ class AuthService {
     };
   }
 
-  public async refresh(refreshToken: string): Promise<ITokenPair> {
-    const tokenDoc = await tokenRepository.findByRefreshToken(refreshToken);
-
-    if (!tokenDoc) {
+  public async refresh(refreshToken: string) {
+    const payload = tokenService.verifyToken(
+      refreshToken,
+      TokenTypeEnum.REFRESH,
+    );
+    if (!payload) {
+      throw new ApiError("Refresh token is not valid", 404);
+    }
+    const storedToken = await tokenRepository.findByParams({
+      refreshToken,
+    });
+    if (!storedToken) {
       throw new ApiError("Refresh token not found", 401);
     }
 
-    if (tokenDoc.isRevoked) {
-      await tokenRepository.revokeAllUserTokens(tokenDoc.user);
-      throw new ApiError("Token reuse detected", 401);
-    }
-
-    if (tokenDoc.expiresAt < new Date()) {
-      throw new ApiError("Refresh token expired", 401);
-    }
-
-    const decoded = jwtService.verifyRefreshToken(
-      refreshToken,
-    ) as IRefreshTokenPayload;
-
-    const user = await userRepository.findById(decoded.id);
-
+    const user = await userRepository.getByID(payload.userId);
     if (!user) {
-      throw new ApiError("User not found", 404);
+      throw new ApiError("User for refresh token not find", 404);
     }
-
-    await tokenRepository.revokeToken(refreshToken);
-
-    const newTokenPair = this.generateTokenPair(user);
-
-    const newDecoded = jwtService.verifyRefreshToken(
-      newTokenPair.refreshToken,
-    ) as IRefreshTokenPayload;
+    await tokenRepository.deleteById(storedToken._id.toString());
+    const tokenPair = tokenService.generateTokens({
+      userId: user._id.toString(),
+      role: user.roles[0].toString() as unknown as RolesEnum,
+    });
+    const expiresAt = new Date(Date.now() + TOKEN_EXPIRATION.REFRESH.MS);
 
     await tokenRepository.create({
       user: user._id,
-      refreshToken: newTokenPair.refreshToken,
-      expiresAt: new Date(newDecoded.exp * 1000),
+      ...tokenPair,
+      expiresAt: expiresAt,
+    });
+    return tokenPair;
+  }
+  public async logout(refreshToken: string) {
+    const payload = tokenService.verifyToken(
+      refreshToken,
+      TokenTypeEnum.REFRESH,
+    );
+
+    if (!payload) {
+      throw new ApiError("Refresh token is not valid", 401);
+    }
+    const storedToken = await tokenRepository.findByParams({
+      refreshToken,
     });
 
-    return newTokenPair;
-  }
-
-  public async logout(refreshToken: string): Promise<void> {
-    const tokenDoc = await tokenRepository.findByRefreshToken(refreshToken);
-
-    if (!tokenDoc) {
-      throw new ApiError("Refresh token not found", 404);
+    if (!storedToken) {
+      throw new ApiError("Refresh token not found", 401);
     }
 
-    await tokenRepository.revokeToken(refreshToken);
+    await tokenRepository.deleteById(storedToken._id.toString());
   }
+  // public async logoutAll(accessToken: string) {
+  //   const payload = tokenService.verifyToken(accessToken, TokenTypeEnum.ACCESS);
+  //   if (!payload) {
+  //     throw new ApiError("Refresh token is not valid", 404);
+  //   }
+  // }
 }
 
 export const authService = new AuthService();
