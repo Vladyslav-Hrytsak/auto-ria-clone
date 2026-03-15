@@ -1,20 +1,29 @@
 import express, { NextFunction, Request, Response } from "express";
+import fileUpload from "express-fileupload";
 import mongoose from "mongoose";
 
 import { config } from "./config/configs";
+import { cronRunner } from "./crons";
 import { ApiError } from "./errors/api-error";
 import { authRouter } from "./routes/auth.routes";
 import { brandRouter } from "./routes/brand.router";
 import { brandRequestRouter } from "./routes/brandRequest.routes";
 import { carListingRouter } from "./routes/carListing.router";
+import { userRouter } from "./routes/user.router";
 
 const app = express();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(
+  fileUpload({
+    useTempFiles: false,
+  }),
+);
 
 // routes
 app.use("/auth", authRouter);
+app.use("/users", userRouter);
 app.use("/brands", brandRouter);
 app.use("/listings", carListingRouter);
 app.use("/brand-requests", brandRequestRouter);
@@ -34,6 +43,7 @@ process.on("uncaughtException", (err: Error) => {
 const start = async () => {
   try {
     await mongoose.connect(config.MONGO_URL);
+    cronRunner();
 
     console.log("MongoDB connected");
 

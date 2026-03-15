@@ -15,7 +15,7 @@ export interface ICarListing {
   priceUSD: number;
   priceEUR: number;
   priceUAH: number;
-  exchangeRate: number;
+  exchangeRateDate: Date;
   region: string;
   city?: string;
   description: string;
@@ -23,4 +23,5 @@ export interface ICarListing {
   editAttempts: number;
   createdAt: Date;
   updatedAt: Date;
+  viewsCount: number;
 }

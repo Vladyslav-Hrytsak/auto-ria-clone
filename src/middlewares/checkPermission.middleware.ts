@@ -1,30 +1,31 @@
-import { NextFunction, Request, Response } from "express";
+import { NextFunction, Response } from "express";
 
 import { ApiError } from "../errors/api-error";
 import { permissionService } from "../services/permission.service";
+import { AuthRequest } from "../types/authRequest.interface";
 
 export const checkPermission = (requiredPermissions: string[]) => {
-  return async (req: Request, res: Response, next: NextFunction) => {
+  return async (req: AuthRequest, res: Response, next: NextFunction) => {
     try {
       if (!req.user) {
-        throw new ApiError("Unauthorized", 401);
+        return next(new ApiError("Unauthorized", 401));
       }
 
       const permissions = await permissionService.getPermissionsByRoles(
         req.user.roles,
       );
 
-      const hasPermission = requiredPermissions.every((permission) =>
+      const hasPermission = requiredPermissions.some((permission) =>
         permissions.includes(permission),
       );
 
       if (!hasPermission) {
-        throw new ApiError("Forbidden", 403);
+        return next(new ApiError("Forbidden", 403));
       }
 
       next();
-    } catch (error) {
-      next(error);
+    } catch (e) {
+      next(e);
     }
   };
 };

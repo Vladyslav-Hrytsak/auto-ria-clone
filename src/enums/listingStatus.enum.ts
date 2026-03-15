@@ -3,4 +3,5 @@ export enum ListingStatus {
   ACTIVE = "ACTIVE",
   REJECTED = "REJECTED",
   INACTIVE = "INACTIVE",
+  DELETED = "DELETED",
 }

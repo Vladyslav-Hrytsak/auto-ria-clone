@@ -1,8 +1,11 @@
+import { CarListing } from "../models/carListing.model";
 import { listingViewRepository } from "../repositories/listingView.repository";
 
 class ListingViewService {
   public async addView(listingId: string) {
-    await listingViewRepository.createView(listingId);
+    await CarListing.findByIdAndUpdate(listingId, {
+      $inc: { viewsCount: 1 },
+    });
   }
 
   public async getViewsStats(listingId: string) {

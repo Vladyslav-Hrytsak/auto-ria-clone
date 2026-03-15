@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 
 import { authService } from "../services/auth.service";
-import { getTokenFromHeader } from "../utils/getTokenFromHeader";
+import { getTokenFromHeader } from "../helper/getTokenFromHeader";
 
 class AuthController {
   async register(req: Request, res: Response, next: NextFunction) {

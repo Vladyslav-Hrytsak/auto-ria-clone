@@ -1,18 +1,28 @@
 export enum Permissions {
-  // Ads
-  VIEW_AD = "view_ad",
-  CREATE_AD = "create_ad",
-  EDIT_OWN_AD = "edit_own_ad",
-  DELETE_OWN_AD = "delete_own_ad",
-  DELETE_ANY_AD = "delete_any_ad",
+  // listings
+  LISTING_VIEW = "listing_view",
+  LISTING_CREATE = "listing_create",
+  LISTING_EDIT_OWN = "listing_edit_own",
+  LISTING_DELETE_OWN = "listing_delete_own",
 
-  // User actions
-  CONTACT_SELLER = "contact_seller",
-  BAN_USER = "ban_user",
+  LISTING_DELETE_ANY = "listing_delete_any",
+  LISTING_VIEW_PENDING = "listing_view_pending",
+  LISTING_MODERATE = "listing_moderate",
+  LISTING_CHANGE_STATUS = "listing_change_status",
 
-  // Statistics
-  VIEW_STATS = "view_stats",
+  // brand
+  BRAND_REQUEST_CREATE = "brand_request_create",
+  BRAND_REQUEST_MODERATE = "brand_request_moderate",
 
-  // System
-  MANAGE_ROLES = "manage_roles",
+  // users
+  USER_CONTACT_SELLER = "user_contact_seller",
+  USER_UPGRADE_ACCOUNT = "user_upgrade_account",
+  USER_CHANGE_ACCOUNT_TYPE_ANY = "user_change_account_type_any",
+  USER_BAN = "user_ban",
+
+  // stats
+  STATS_VIEW = "stats_view",
+
+  // system
+  ROLE_MANAGE = "role_manage",
 }

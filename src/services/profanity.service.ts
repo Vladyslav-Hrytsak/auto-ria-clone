@@ -36,16 +36,26 @@ class ProfanityService {
     "гніда",
   ];
 
-  public checkText(text: string) {
-    const normalizedText = text.toLowerCase();
+  private normalize(text: string) {
+    return text.toLowerCase().trim();
+  }
 
-    const foundWords = this.badWords.filter((word) =>
-      normalizedText.includes(word),
-    );
+  public checkTexts(texts: string[]) {
+    const found = new Set<string>();
+
+    for (const text of texts) {
+      const normalized = this.normalize(text);
+
+      for (const word of this.badWords) {
+        if (normalized.includes(word)) {
+          found.add(word);
+        }
+      }
+    }
 
     return {
-      hasProfanity: foundWords.length > 0,
-      words: foundWords,
+      hasProfanity: found.size > 0,
+      words: Array.from(found),
     };
   }
 }

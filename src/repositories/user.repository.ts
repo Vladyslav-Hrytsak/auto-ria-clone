@@ -17,6 +17,10 @@ class UserRepository {
   async findById(id: string): Promise<IUser | null> {
     return await User.findById(id);
   }
+
+  public async putByID(id: string, dto: Partial<IUser>): Promise<IUser | null> {
+    return await User.findByIdAndUpdate(id, dto, { new: true });
+  }
 }
 
 export const userRepository = new UserRepository();

@@ -56,8 +56,8 @@ const CarListingSchema = new Schema<ICarListing>(
     priceEUR: { type: Number, required: true },
     priceUAH: { type: Number, required: true },
 
-    exchangeRate: {
-      type: Number,
+    exchangeRateDate: {
+      type: Date,
       required: true,
     },
 
@@ -87,6 +87,12 @@ const CarListingSchema = new Schema<ICarListing>(
     editAttempts: {
       type: Number,
       default: 0,
+    },
+
+    viewsCount: {
+      type: Number,
+      default: 0,
+      index: true,
     },
   },
   {

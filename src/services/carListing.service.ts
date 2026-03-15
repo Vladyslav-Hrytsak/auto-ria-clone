@@ -18,91 +18,74 @@ class CarListingService {
     }
   }
 
-  public async createListing(user: any, data: any) {
-    const { brand, model, year, price, currency, region, description } = data;
-
-    /**
-     * 1 Перевірка ліміту оголошень
-     */
+  public async createListing(user: IUser, data: any) {
     await this.checkListingLimit(user);
 
-    /**
-     * 2 Конвертація валюти
-     */
-    const converted = await currencyService.convertPrice(price, currency);
+    const { brand, model, region, description, title, price, currency } = data;
 
-    /**
-     * 3 Перевірка profanity
-     */
-    const profanityCheck = profanityService.checkText(description);
-
-    /**
-     * 4 Перевірка статус
-     */
-    const status = profanityCheck.hasProfanity
-      ? ListingStatus.PENDING
-      : ListingStatus.ACTIVE;
-
-    /**
-     * 5 Створення оголошення
-     */
-    const listing = await carListingRepository.createListing({
-      seller: user._id,
+    const profanityCheck = profanityService.checkTexts([
       brand,
       model,
-      year,
-      price,
-      currency,
       region,
       description,
+      title,
+    ]);
+
+    if (profanityCheck.hasProfanity) {
+      throw new ApiError(
+        `Оголошення містить нецензурні слова: ${profanityCheck.words.join(", ")}. Будь ласка, відредагуйте текст.`,
+        400,
+      );
+    }
+
+    const converted = await currencyService.convertPrice(price, currency);
+
+    const listing = await carListingRepository.createListing({
+      ...data,
+      seller: user._id,
 
       priceUSD: converted.priceUSD,
       priceEUR: converted.priceEUR,
       priceUAH: converted.priceUAH,
+      exchangeRateDate: converted.exchangeRateDate,
 
-      exchangeRate: converted.exchangeRate,
-
-      status,
+      status: ListingStatus.ACTIVE,
+      editAttempts: 0,
     });
 
     return listing;
   }
-  public async updateListing(user: any, listingId: string, data: any) {
+
+  public async updateListing(user: IUser, listingId: string, data: any) {
     const listing = await carListingRepository.findById(listingId);
 
-    if (!listing) {
-      throw new ApiError("Listing not found", 404);
-    }
+    if (!listing) throw new ApiError("Listing not found", 404);
 
     if (listing.seller.toString() !== user._id.toString()) {
       throw new ApiError("Forbidden", 403);
     }
 
-    /**
-     * Перевірка кількості спроб
-     */
     if (listing.editAttempts >= 3) {
       throw new ApiError("Edit limit exceeded", 400);
     }
 
-    const { price, currency, description } = data;
+    const { brand, model, region, description, title, price, currency } = data;
 
-    /**
-     * Конвертація валюти
-     */
-    const converted = await currencyService.convertPrice(price, currency);
-
-    /**
-     * Перевірка profanity
-     */
-    const profanityCheck = profanityService.checkText(description);
+    const profanityCheck = profanityService.checkTexts([
+      brand,
+      model,
+      region,
+      description,
+      title,
+    ]);
 
     let status = ListingStatus.ACTIVE;
+    let attempts = listing.editAttempts;
 
     if (profanityCheck.hasProfanity) {
-      listing.editAttempts += 1;
+      attempts += 1;
 
-      if (listing.editAttempts >= 3) {
+      if (attempts >= 3) {
         status = ListingStatus.INACTIVE;
 
         await emailService.sendManagerNotification(listing._id.toString());
@@ -111,16 +94,15 @@ class CarListingService {
       }
     }
 
+    const converted = await currencyService.convertPrice(price, currency);
+
     const updated = await carListingRepository.updateListing(listingId, {
       ...data,
-
       priceUSD: converted.priceUSD,
       priceEUR: converted.priceEUR,
       priceUAH: converted.priceUAH,
-
-      exchangeRate: converted.exchangeRate,
-
-      editAttempts: listing.editAttempts,
+      exchangeRateDate: converted.exchangeRateDate,
+      editAttempts: attempts,
       status,
     });
 
