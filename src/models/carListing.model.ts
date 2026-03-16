@@ -6,6 +6,11 @@ import { ICarListing } from "../interfaces/carListing.interface";
 
 const CarListingSchema = new Schema<ICarListing>(
   {
+    title: {
+      type: String,
+      required: true,
+      index: true,
+    },
     seller: {
       type: Schema.Types.ObjectId,
       ref: "User",
@@ -34,12 +39,6 @@ const CarListingSchema = new Schema<ICarListing>(
     mileage: {
       type: Number,
     },
-
-    images: [
-      {
-        type: String,
-      },
-    ],
 
     price: {
       type: Number,
@@ -80,9 +79,16 @@ const CarListingSchema = new Schema<ICarListing>(
     status: {
       type: String,
       enum: Object.values(ListingStatus),
-      default: ListingStatus.PENDING,
+      // default: ListingStatus.PENDING,
       index: true,
     },
+
+    photos: [
+      {
+        url: { type: String, required: true },
+        order: { type: Number, default: 0 },
+      },
+    ],
 
     editAttempts: {
       type: Number,

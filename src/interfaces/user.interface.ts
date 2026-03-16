@@ -19,5 +19,5 @@ export interface IUser extends Document {
 
 export type IUserResponse = Pick<
   IUser,
-  "_id" | "email" | "roles" | "accountType" | "isBanned"
+  "_id" | "email" | "roles" | "accountType" | "isBanned" | "avatar"
 >;

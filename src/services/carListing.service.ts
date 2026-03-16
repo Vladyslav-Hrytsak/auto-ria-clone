@@ -1,11 +1,16 @@
+import { UploadedFile } from "express-fileupload";
+
 import { AccountType } from "../enums/accountType.enum";
+import { FileItemTypeEnum } from "../enums/file-item-type.enum";
 import { ListingStatus } from "../enums/listingStatus.enum";
 import { ApiError } from "../errors/api-error";
+import { ICarListing } from "../interfaces/carListing.interface";
 import { IUser } from "../interfaces/user.interface";
 import { carListingRepository } from "../repositories/carListing.repository";
 import { currencyService } from "./currency.service";
 import { emailService } from "./email.service";
 import { profanityService } from "./profanity.service";
+import { s3Service } from "./s3.service";
 
 class CarListingService {
   public async checkListingLimit(user: IUser) {
@@ -107,6 +112,58 @@ class CarListingService {
     });
 
     return updated;
+  }
+
+  public async uploadPhotos(
+    user: IUser,
+    listingId: string,
+    files: UploadedFile[],
+  ): Promise<ICarListing> {
+    const listing = await carListingRepository.getById(listingId);
+
+    if (!listing) throw new ApiError("Listing not found", 404);
+    if (listing.status === ListingStatus.INACTIVE) {
+      throw new ApiError("Listing inactive", 400);
+    }
+
+    if (listing.seller.toString() !== user._id.toString()) {
+      throw new ApiError("Forbidden", 403);
+    }
+
+    const uploaded = [];
+
+    for (const file of files) {
+      const path = await s3Service.uploadFile(
+        file,
+        FileItemTypeEnum.LISTING,
+        listingId,
+      );
+
+      uploaded.push({
+        url: path,
+        order: listing.photos.length + uploaded.length,
+      });
+    }
+
+    return await carListingRepository.addPhotos(listingId, uploaded);
+  }
+
+  public async deletePhoto(
+    user: IUser,
+    listingId: string,
+    url: string,
+  ): Promise<ICarListing> {
+    const listing = await carListingRepository.getById(listingId);
+
+    if (!listing) throw new ApiError("Listing not found", 404);
+
+    if (listing.seller.toString() !== user._id.toString()) {
+      throw new ApiError("Forbidden", 403);
+    }
+
+    await s3Service.deleteFile(url);
+
+    return await carListingRepository.removePhoto(listingId, url);
   }
 }
 

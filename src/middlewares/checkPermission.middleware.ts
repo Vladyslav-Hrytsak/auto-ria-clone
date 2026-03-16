@@ -1,3 +1,5 @@
+import "../models/permission.model";
+
 import { NextFunction, Response } from "express";
 
 import { ApiError } from "../errors/api-error";

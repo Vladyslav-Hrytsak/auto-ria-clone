@@ -20,7 +20,7 @@ router.patch(
 router.post(
   "/me/avatar",
   authMiddleware.checkAccessToken,
-  fileMiddleware.isFileValid(10),
+  fileMiddleware.validateImages("avatar", 1, 10),
   userController.uploadAvatar,
 );
 
@@ -29,6 +29,5 @@ router.put(
   authMiddleware.checkAccessToken,
   userController.deleteAvatar,
 );
-
 
 export const userRouter = router;

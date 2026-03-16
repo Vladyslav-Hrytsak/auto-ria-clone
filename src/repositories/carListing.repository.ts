@@ -70,6 +70,26 @@ class CarListingRepository {
       .limit(limit);
   }
 
+  public getById(id) {
+    return CarListing.findById(id).populate("brand").populate("model");
+  }
+
+  public addPhotos(id, photos) {
+    return CarListing.findByIdAndUpdate(
+      id,
+      { $push: { photos: { $each: photos } } },
+      { new: true },
+    );
+  }
+
+  public removePhoto(id, url) {
+    return CarListing.findByIdAndUpdate(
+      id,
+      { $pull: { photos: { url } } },
+      { new: true },
+    );
+  }
+
   public async softDelete(id: string) {
     return await CarListing.findByIdAndUpdate(
       id,
