@@ -1,15 +1,19 @@
 import { config } from "../config/configs";
 import { TOKEN_EXPIRATION } from "../constants/constants";
 import { AccountType } from "../enums/accountType.enum";
+import { ActionTokenTypeEnum } from "../enums/action-token-type.enum";
+import { EmailTypeEnum } from "../enums/email-type.enum";
 import { RolesEnum } from "../enums/roles.enum";
 import { SellerTypeEnum } from "../enums/sellerType.enum";
 import { TokenTypeEnum } from "../enums/token-type.enum";
 import { ApiError } from "../errors/api-error";
 import { RegisterDto } from "../interfaces/registerDto.interface";
 import { Role } from "../models/role.model";
+import { actionTokenRepository } from "../repositories/action-token.repository";
 import { tokenRepository } from "../repositories/token.repository";
 import { userRepository } from "../repositories/user.repository";
 import { passwordService } from "./password.service";
+import { sendGridService } from "./send-grid.service";
 import { tokenService } from "./token.service";
 
 class AuthService {
@@ -38,7 +42,32 @@ class AuthService {
       roles: [roleEntity._id],
       accountType: AccountType.BASIC,
     });
-    return user;
+
+    const tokenPair = tokenService.generateTokens({
+      userId: user._id.toString(),
+      role: user.roles[0].toString() as unknown as RolesEnum,
+    });
+    const expiresAt = new Date(Date.now() + TOKEN_EXPIRATION.REFRESH.MS);
+    await tokenRepository.create({
+      user: user._id,
+      refreshToken: tokenPair.refreshToken,
+      expiresAt: expiresAt,
+    });
+
+    const verifyToken = tokenService.generateResetToken(
+      { userId: user._id.toString(), role: roleEntity.name as RolesEnum },
+      ActionTokenTypeEnum.VERIFY,
+    );
+    await actionTokenRepository.create({
+      token: verifyToken,
+      type: ActionTokenTypeEnum.VERIFY,
+      _userId: user._id.toString(),
+    });
+    await sendGridService.sendByType(user.email, EmailTypeEnum.VERIFIED, {
+      frontUrl: config.FRONT_URL,
+      actionToken: verifyToken,
+    });
+    return { user, tokenPair };
   }
 
   public async login(email: string, password: string) {
