@@ -44,6 +44,9 @@ const userSchema = new mongoose.Schema(
       default: "private",
     },
 
+    isVerified: { type: Boolean, default: false },
+    isDeleted: { type: Boolean, default: false },
+
     isBanned: {
       type: Boolean,
       default: false,

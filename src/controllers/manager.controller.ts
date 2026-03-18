@@ -23,8 +23,9 @@ class ManagerController {
   public async banUser(req: AuthRequest, res: Response, next: NextFunction) {
     try {
       const { id } = req.params;
+      const { banReason } = req.body;
 
-      const result = await managerService.banUser(id);
+      const result = await managerService.banUser(id, banReason);
 
       res.json(result);
     } catch (e) {

@@ -1,7 +1,13 @@
 import { NextFunction, Request, Response } from "express";
 
-import { authService } from "../services/auth.service";
 import { getTokenFromHeader } from "../helper/getTokenFromHeader";
+import { ITokenPayload } from "../interfaces/token.interface";
+import {
+  IChangePassword,
+  IResetPasswordSend,
+  IResetPasswordSet,
+} from "../interfaces/user.interface";
+import { authService } from "../services/auth.service";
 
 class AuthController {
   async register(req: Request, res: Response, next: NextFunction) {
@@ -46,6 +52,67 @@ class AuthController {
       res.status(204).send();
     } catch (error) {
       next(error);
+    }
+  }
+
+  public async logoutAll(req: Request, res: Response, next: NextFunction) {
+    try {
+      const authHeader = req.headers.authorization;
+      if (!authHeader) {
+        throw new Error("No token provided");
+      }
+      const accessToken = authHeader.split(" ")[1];
+      await authService.logoutAll(accessToken);
+      res.status(204).send();
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  public async forgotPasswordSendEmail(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) {
+    try {
+      const dto = req.body as IResetPasswordSend;
+      await authService.forgotPasswordSendEmail(dto);
+      res.status(204).send();
+    } catch (err) {
+      next(err);
+    }
+  }
+  public async forgotPasswordSet(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) {
+    try {
+      const jwtPayload = req.res.locals.jwtPayload as ITokenPayload;
+      const dto = req.body as IResetPasswordSet;
+      await authService.forgotPasswordSet(dto, jwtPayload);
+      res.status(204).send();
+    } catch (err) {
+      next(err);
+    }
+  }
+  public async changePassword(req: Request, res: Response, next: NextFunction) {
+    try {
+      const jwtPayload = req.res.locals.jwtPayload as ITokenPayload;
+      const dto = req.body as IChangePassword;
+      await authService.changePassword(jwtPayload, dto);
+      res.status(204).send();
+    } catch (error) {
+      next(error);
+    }
+  }
+  public async verifyUser(req: Request, res: Response, next: NextFunction) {
+    try {
+      const jwtPayload = req.res.locals.jwtPayload as ITokenPayload;
+      await authService.verifyUser(jwtPayload);
+      res.status(204).send();
+    } catch (err) {
+      next(err);
     }
   }
 }

@@ -9,4 +9,7 @@ export type EmailCombinedPayloadType = {
   listingId?: string;
   sellerId?: string;
   sellerName?: string;
+  brandName?: string;
+  modelName?: string;
+  message?: string;
 };

@@ -12,10 +12,17 @@ export interface IUser extends Document {
   roles: Types.ObjectId[];
   accountType: AccountType;
   sellerType: SellerTypeEnum;
+  isVerified: boolean;
+  isDeleted: boolean;
   isBanned: boolean;
   createdAt: Date;
   updatedAt: Date;
 }
+
+export type ISignIn = Pick<IUser, "email" | "password">;
+export type IResetPasswordSend = Pick<IUser, "email">;
+export type IResetPasswordSet = Pick<IUser, "password"> & { token: string };
+export type IChangePassword = Pick<IUser, "password"> & { newPassword: string };
 
 export type IUserResponse = Pick<
   IUser,

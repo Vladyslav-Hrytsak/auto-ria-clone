@@ -34,4 +34,14 @@ export const emailTemplateConstants = {
   [EmailTypeEnum.ACCOUNT_UNBANNED]: {
     templateId: "d-5cb901ff64394553985915c7f3919bbf",
   },
+  [EmailTypeEnum.LOGOUT]: {
+    templateId: "d-e5827d738f4348debd5e8a0f5091415f",
+  },
+  [EmailTypeEnum.BRAND_MODEL_REQUEST]: {
+    templateId: "d-00ae8c9997b040e391b7162ea15d3a90",
+  },
+
+  [EmailTypeEnum.LISTING_INACTIVE]: {
+    templateId: "d-aa478e50b07e4fa0a1a6dd7aab3ddec1",
+  },
 };

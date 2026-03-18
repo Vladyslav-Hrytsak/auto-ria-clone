@@ -4,6 +4,7 @@ import { PickRequired } from "./pick-required.type";
 
 export type emailTypeToPayload = {
   [EmailTypeEnum.RESET_PASSWORD]: PickRequired<
+    //+
     EmailCombinedPayloadType,
     "name" | "frontUrl" | "actionToken"
   >;
@@ -12,6 +13,7 @@ export type emailTypeToPayload = {
     "name" | "frontUrl" | "actionToken"
   >;
   [EmailTypeEnum.OLD_VISIT]: PickRequired<
+    //+
     EmailCombinedPayloadType,
     "name" | "frontUrl"
   >;
@@ -20,6 +22,7 @@ export type emailTypeToPayload = {
     "name" | "frontUrl" | "sellerName" | "sellerId" | "listingId"
   >;
   [EmailTypeEnum.VERIFIED]: PickRequired<
+    //+
     EmailCombinedPayloadType,
     "actionToken" | "frontUrl"
   >;
@@ -28,23 +31,40 @@ export type emailTypeToPayload = {
     "carTitle" | "frontUrl" | "listingId"
   >;
   [EmailTypeEnum.LISTING_EDITING]: PickRequired<
+    //+
     EmailCombinedPayloadType,
     "carTitle" | "attemptsLeft" | "frontUrl"
   >;
+  [EmailTypeEnum.LISTING_INACTIVE]: PickRequired<
+    //+
+    EmailCombinedPayloadType,
+    "carTitle" | "frontUrl"
+  >;
   [EmailTypeEnum.PREMIUM_ACTIVATED]: PickRequired<
+    // add endpoint
     EmailCombinedPayloadType,
     "expireDate" | "frontUrl"
   >;
   [EmailTypeEnum.ACCOUNT_BANNED]: PickRequired<
+    //+
     EmailCombinedPayloadType,
     "name" | "banReason"
   >;
   [EmailTypeEnum.WELCOME]: PickRequired<
+    //+
     EmailCombinedPayloadType,
     "name" | "frontUrl"
   >;
   [EmailTypeEnum.ACCOUNT_UNBANNED]: PickRequired<
+    //+
     EmailCombinedPayloadType,
     "name" | "frontUrl"
+  >;
+  [EmailTypeEnum.LOGOUT]: PickRequired<EmailCombinedPayloadType, "name">; //+
+
+  [EmailTypeEnum.BRAND_MODEL_REQUEST]: PickRequired<
+    //+
+    EmailCombinedPayloadType,
+    "brandName" | "modelName" | "sellerId" | "message"
   >;
 };

@@ -1,4 +1,5 @@
 import { BrandRequestStatus } from "../enums/brandRequestStatus.enum";
+import { EmailTypeEnum } from "../enums/email-type.enum";
 import { ListingStatus } from "../enums/listingStatus.enum";
 import { ApiError } from "../errors/api-error";
 import { brandRepository } from "../repositories/brand.repository";
@@ -6,6 +7,7 @@ import { brandRequestRepository } from "../repositories/brandRequest.repository"
 import { carListingRepository } from "../repositories/carListing.repository";
 import { modelRepository } from "../repositories/model.repository";
 import { userRepository } from "../repositories/user.repository";
+import { sendGridService } from "./send-grid.service";
 
 class ManagerService {
   public async deleteListing(listingId: string) {
@@ -23,7 +25,7 @@ class ManagerService {
     };
   }
 
-  public async banUser(userId: string) {
+  public async banUser(userId: string, banReason: string) {
     const user = await userRepository.findById(userId);
 
     if (!user) {
@@ -33,6 +35,11 @@ class ManagerService {
     user.isBanned = true;
 
     await user.save();
+
+    await sendGridService.sendByType(user.email, EmailTypeEnum.ACCOUNT_BANNED, {
+      name: user.name,
+      banReason: banReason,
+    });
 
     return {
       message: "User banned",
@@ -49,6 +56,15 @@ class ManagerService {
     user.isBanned = false;
 
     await user.save();
+
+    await sendGridService.sendByType(
+      user.email,
+      EmailTypeEnum.ACCOUNT_UNBANNED,
+      {
+        name: user.name,
+        frontUrl: process.env.FRONT_URL,
+      },
+    );
 
     return {
       message: "User unbanned",

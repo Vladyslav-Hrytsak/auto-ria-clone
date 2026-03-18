@@ -10,4 +10,7 @@ export enum EmailTypeEnum {
   ACCOUNT_BANNED = "account_banned",
   WELCOME = "welcome",
   ACCOUNT_UNBANNED = "account_unbanned",
+  LOGOUT = "logout",
+  BRAND_MODEL_REQUEST = "brand-model-request",
+  LISTING_INACTIVE = "ad-inactive",
 }

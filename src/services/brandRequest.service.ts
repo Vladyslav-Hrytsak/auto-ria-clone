@@ -1,5 +1,7 @@
+import { EmailTypeEnum } from "../enums/email-type.enum";
 import { BrandRequest } from "../models/brandRequest.model";
-import { emailService } from "./email.service";
+import { userRepository } from "../repositories/user.repository";
+import { sendGridService } from "./send-grid.service";
 
 class BrandRequestService {
   public async createBrandRequest(
@@ -15,11 +17,23 @@ class BrandRequestService {
       user: userId,
     });
 
-    await emailService.sendBrandRequestNotification(
-      brandName,
-      modelName,
-      message,
-      userId,
+    const managers = await userRepository.getManagers();
+
+    if (!managers.length) {
+      return request;
+    }
+
+    const managerEmails = managers.map((m) => m.email).filter(Boolean);
+
+    await Promise.all(
+      managerEmails.map((email) =>
+        sendGridService.sendByType(email, EmailTypeEnum.BRAND_MODEL_REQUEST, {
+          brandName,
+          modelName,
+          sellerId: userId,
+          message,
+        }),
+      ),
     );
 
     return request;

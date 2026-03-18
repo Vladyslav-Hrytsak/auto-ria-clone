@@ -8,8 +8,15 @@ import { SellerTypeEnum } from "../enums/sellerType.enum";
 import { TokenTypeEnum } from "../enums/token-type.enum";
 import { ApiError } from "../errors/api-error";
 import { RegisterDto } from "../interfaces/registerDto.interface";
+import { ITokenPayload } from "../interfaces/token.interface";
+import {
+  IChangePassword,
+  IResetPasswordSend,
+  IResetPasswordSet,
+} from "../interfaces/user.interface";
 import { Role } from "../models/role.model";
 import { actionTokenRepository } from "../repositories/action-token.repository";
+import { oldPasswordRepository } from "../repositories/old-password.repository";
 import { tokenRepository } from "../repositories/token.repository";
 import { userRepository } from "../repositories/user.repository";
 import { passwordService } from "./password.service";
@@ -164,12 +171,181 @@ class AuthService {
 
     await tokenRepository.deleteById(storedToken._id.toString());
   }
-  // public async logoutAll(accessToken: string) {
-  //   const payload = tokenService.verifyToken(accessToken, TokenTypeEnum.ACCESS);
-  //   if (!payload) {
-  //     throw new ApiError("Refresh token is not valid", 404);
-  //   }
-  // }
+
+  public async logoutAll(accessToken): Promise<void> {
+    const payload = tokenService.verifyToken(accessToken, TokenTypeEnum.ACCESS);
+    if (!payload) {
+      throw new ApiError("Refresh token is not valid", 404);
+    }
+    const user = await userRepository.findById(payload.userId);
+    await tokenRepository.deleteManyByParams({ _userId: payload.userId });
+    await sendGridService.sendByType(user.email, EmailTypeEnum.LOGOUT, {
+      name: user.name,
+    });
+  }
+
+  public async forgotPasswordSendEmail(dto: IResetPasswordSend): Promise<void> {
+    const user = await userRepository.findByEmail(dto.email);
+    if (!user) {
+      throw new ApiError("User not found", 401);
+    }
+    const token = tokenService.generateResetToken(
+      {
+        userId: user._id.toString(),
+        role: user.roles[0].toString() as unknown as RolesEnum,
+      },
+      ActionTokenTypeEnum.FORGOT_PASSWORD,
+    );
+    await actionTokenRepository.create({
+      token,
+      type: ActionTokenTypeEnum.FORGOT_PASSWORD,
+      _userId: user._id.toString(),
+    });
+    await sendGridService.sendByType(user.email, EmailTypeEnum.RESET_PASSWORD, {
+      name: user.name,
+      frontUrl: config.FRONT_URL,
+      actionToken: token,
+    });
+  }
+
+  public async forgotPasswordSet(
+    dto: IResetPasswordSet,
+    jwtPayload: ITokenPayload,
+  ): Promise<void> {
+    const user = await userRepository.getByID(jwtPayload.userId);
+
+    if (!user) {
+      throw new ApiError("User not found", 404);
+    }
+
+    const isSameAsCurrent = await passwordService.compare(
+      dto.password,
+      user.password,
+    );
+
+    if (isSameAsCurrent) {
+      throw new ApiError("New password must differ from current password", 409);
+    }
+
+    const oldPasswords = await oldPasswordRepository.getByUserId(
+      jwtPayload.userId,
+    );
+
+    for (const oldPass of oldPasswords) {
+      const isSame = await passwordService.compare(
+        dto.password,
+        oldPass.password,
+      );
+
+      if (isSame) {
+        throw new ApiError(
+          "You cannot reuse one of your previous passwords",
+          409,
+        );
+      }
+    }
+
+    await oldPasswordRepository.create({
+      _userId: jwtPayload.userId,
+      password: user.password,
+    });
+
+    const hashedPassword = await passwordService.hash(dto.password);
+
+    await userRepository.putByID(jwtPayload.userId, {
+      password: hashedPassword,
+    });
+
+    await actionTokenRepository.deleteManyByParams({
+      _userId: jwtPayload.userId,
+      type: ActionTokenTypeEnum.FORGOT_PASSWORD,
+    });
+  }
+
+  public async changePassword(
+    jwtPayload: ITokenPayload,
+    dto: IChangePassword,
+  ): Promise<void> {
+    const user = await userRepository.getByID(jwtPayload.userId);
+
+    if (!user) {
+      throw new ApiError("User not found", 404);
+    }
+
+    const isPasswordCorrect = await passwordService.compare(
+      dto.password,
+      user.password,
+    );
+
+    if (!isPasswordCorrect) {
+      throw new ApiError("Invalid previous password", 401);
+    }
+
+    const isSameAsCurrent = await passwordService.compare(
+      dto.newPassword,
+      user.password,
+    );
+
+    if (isSameAsCurrent) {
+      throw new ApiError("New password must differ from current password", 409);
+    }
+
+    const oldPasswords = await oldPasswordRepository.getByUserId(
+      jwtPayload.userId,
+    );
+
+    for (const oldPass of oldPasswords) {
+      const isSame = await passwordService.compare(
+        dto.newPassword,
+        oldPass.password,
+      );
+
+      if (isSame) {
+        throw new ApiError(
+          "You cannot reuse one of your previous passwords",
+          409,
+        );
+      }
+    }
+
+    await oldPasswordRepository.create({
+      _userId: jwtPayload.userId,
+      password: user.password,
+    });
+
+    const hashedPassword = await passwordService.hash(dto.newPassword);
+
+    await userRepository.putByID(jwtPayload.userId, {
+      password: hashedPassword,
+    });
+    await actionTokenRepository.deleteManyByParams({
+      _userId: jwtPayload.userId,
+    });
+  }
+
+  public async verifyUser(jwtPayload: ITokenPayload): Promise<void> {
+    const user = await userRepository.getByID(jwtPayload.userId);
+
+    if (!user) {
+      throw new ApiError("User not found", 404);
+    }
+
+    if (user.isVerified) {
+      throw new ApiError("User already verified", 400);
+    }
+
+    await userRepository.verifyUser(jwtPayload.userId);
+
+    await actionTokenRepository.deleteManyByParams({
+      _userId: jwtPayload.userId,
+      type: ActionTokenTypeEnum.VERIFY,
+    });
+
+    await sendGridService.sendByType(user.email, EmailTypeEnum.WELCOME, {
+      name: user.name,
+      frontUrl: config.FRONT_URL,
+    });
+  }
 }
 
 export const authService = new AuthService();

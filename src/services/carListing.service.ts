@@ -1,6 +1,7 @@
 import { UploadedFile } from "express-fileupload";
 
 import { AccountType } from "../enums/accountType.enum";
+import { EmailTypeEnum } from "../enums/email-type.enum";
 import { FileItemTypeEnum } from "../enums/file-item-type.enum";
 import { ListingStatus } from "../enums/listingStatus.enum";
 import { ApiError } from "../errors/api-error";
@@ -8,9 +9,9 @@ import { ICarListing } from "../interfaces/carListing.interface";
 import { IUser } from "../interfaces/user.interface";
 import { carListingRepository } from "../repositories/carListing.repository";
 import { currencyService } from "./currency.service";
-import { emailService } from "./email.service";
 import { profanityService } from "./profanity.service";
 import { s3Service } from "./s3.service";
+import { sendGridService } from "./send-grid.service";
 
 class CarListingService {
   public async checkListingLimit(user: IUser) {
@@ -89,11 +90,27 @@ class CarListingService {
 
     if (profanityCheck.hasProfanity) {
       attempts += 1;
+      await sendGridService.sendByType(
+        user.email,
+        EmailTypeEnum.LISTING_EDITING,
+        {
+          carTitle: listing.title,
+          attemptsLeft: 3 - attempts,
+          frontUrl: process.env.FRONT_URL,
+        },
+      );
 
       if (attempts >= 3) {
         status = ListingStatus.INACTIVE;
 
-        await emailService.sendManagerNotification(listing._id.toString());
+        await sendGridService.sendByType(
+          user.email,
+          EmailTypeEnum.LISTING_INACTIVE,
+          {
+            carTitle: listing.title,
+            frontUrl: process.env.FRONT_URL,
+          },
+        );
       } else {
         status = ListingStatus.PENDING;
       }
