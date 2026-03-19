@@ -3,6 +3,7 @@ import { UploadedFile } from "express-fileupload";
 
 import { ITokenPayload } from "../interfaces/token.interface";
 import { userPresenter } from "../presenters /user.presenter";
+import { carListingService } from "../services/carListing.service";
 import { userService } from "../services/user.service";
 import { AuthRequest } from "../types/authRequest.interface";
 
@@ -13,16 +14,28 @@ class UserController {
     next: NextFunction,
   ) {
     try {
-      const { accountType } = req.body;
-
       const result = await userService.changeAccountType(
         req.user._id.toString(),
-        accountType,
       );
 
       res.json(result);
     } catch (e) {
       next(e);
+    }
+  }
+
+  public async deleteAccount(
+    req: AuthRequest,
+    res: Response,
+    next: NextFunction,
+  ) {
+    try {
+      const jwtPayload = req.res.locals.jwtPayload as ITokenPayload;
+      const user = await userService.deleteAccount(jwtPayload);
+      const result = userPresenter.toPublicResDto(user);
+      res.status(201).json(result);
+    } catch (err) {
+      next(err);
     }
   }
 
@@ -55,6 +68,25 @@ class UserController {
       res.status(201).json(result);
     } catch (err) {
       next(err);
+    }
+  }
+
+  public async deleteListing(
+    req: AuthRequest,
+    res: Response,
+    next: NextFunction,
+  ) {
+    try {
+      const user = req.user;
+
+      const listing = await carListingService.deleteListing(
+        user,
+        req.params.id,
+      );
+
+      res.json(listing);
+    } catch (error) {
+      next(error);
     }
   }
 }

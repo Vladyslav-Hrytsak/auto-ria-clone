@@ -13,9 +13,6 @@ export const emailTemplateConstants = {
   [EmailTypeEnum.OLD_VISIT]: {
     templateId: "d-3424bb3095fa42998149b9072a05e399",
   },
-  [EmailTypeEnum.MANAGER_REVIEW]: {
-    templateId: "d-41e594ef365a4858a5d5b4653df27291",
-  },
   [EmailTypeEnum.VERIFIED]: {
     templateId: "d-f00ba8e4517a498e93655b47e17984dd",
   },
@@ -25,7 +22,7 @@ export const emailTemplateConstants = {
   [EmailTypeEnum.LISTING_EDITING]: {
     templateId: "d-8f892748bd0e409aa896f976f37484e9",
   },
-  [EmailTypeEnum.PREMIUM_ACTIVATED]: {
+  [EmailTypeEnum.CHANGE_ACCOUNT_TYPE]: {
     templateId: "d-75edaa4ba74744088cb5a2bb3dc9a1b4",
   },
   [EmailTypeEnum.ACCOUNT_BANNED]: {
@@ -43,5 +40,8 @@ export const emailTemplateConstants = {
 
   [EmailTypeEnum.LISTING_INACTIVE]: {
     templateId: "d-aa478e50b07e4fa0a1a6dd7aab3ddec1",
+  },
+  [EmailTypeEnum.LISTING_DELETED]: {
+    templateId: "d-7ea40f4cb17c4c86908c7c7aae7c1531",
   },
 };

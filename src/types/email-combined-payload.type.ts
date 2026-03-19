@@ -12,4 +12,5 @@ export type EmailCombinedPayloadType = {
   brandName?: string;
   modelName?: string;
   message?: string;
+  accountType?: string;
 };

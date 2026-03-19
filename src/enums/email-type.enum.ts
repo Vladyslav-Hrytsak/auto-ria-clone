@@ -6,11 +6,12 @@ export enum EmailTypeEnum {
   VERIFIED = "verified",
   LISTING_APPROVED = "ad-approved",
   LISTING_EDITING = "ad-editing",
-  PREMIUM_ACTIVATED = "premium_activated",
+  CHANGE_ACCOUNT_TYPE = "change-account-type",
   ACCOUNT_BANNED = "account_banned",
   WELCOME = "welcome",
   ACCOUNT_UNBANNED = "account_unbanned",
   LOGOUT = "logout",
   BRAND_MODEL_REQUEST = "brand-model-request",
   LISTING_INACTIVE = "ad-inactive",
+  LISTING_DELETED = "listing-deleted",
 }

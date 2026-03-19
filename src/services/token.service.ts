@@ -47,12 +47,16 @@ class TokenService {
         secret = config.ACTION_FORGOT_PASSWORD_SECRET;
         expiration = config.ACTION_FORGOT_PASSWORD_EXPIRATION;
         break;
-      default:
-        throw new ApiError("Unable to verify token", 401);
-
       case ActionTokenTypeEnum.VERIFY:
         secret = config.ACTION_VERIFY_SECRET;
         expiration = config.ACTION_VERIFY_EXPIRATION;
+        break;
+      case ActionTokenTypeEnum.DELETE:
+        secret = config.ACTION_DELETE_SECRET;
+        expiration = config.ACTION_DELETE_EXPIRATION;
+        break;
+      default:
+        throw new ApiError("Invalid token type", 400);
     }
 
     return jsonwebtoken.sign(payload, secret, {
@@ -64,21 +68,27 @@ class TokenService {
     token: string,
     type: ActionTokenTypeEnum,
   ): ITokenPayload {
+    let secret: string;
+
+    switch (type) {
+      case ActionTokenTypeEnum.FORGOT_PASSWORD:
+        secret = config.ACTION_FORGOT_PASSWORD_SECRET;
+        break;
+      case ActionTokenTypeEnum.VERIFY:
+        secret = config.ACTION_VERIFY_SECRET;
+        break;
+      case ActionTokenTypeEnum.DELETE:
+        secret = config.ACTION_DELETE_SECRET;
+        break;
+      default:
+        throw new ApiError("Invalid token type", 400);
+    }
+
     try {
-      let secret: string;
-      switch (type) {
-        case ActionTokenTypeEnum.FORGOT_PASSWORD:
-          secret = config.ACTION_FORGOT_PASSWORD_SECRET;
-          break;
-        default:
-          throw new ApiError("Unable to verify token", 401);
-        case ActionTokenTypeEnum.VERIFY:
-          secret = config.ACTION_VERIFY_SECRET;
-      }
       return jsonwebtoken.verify(token, secret) as ITokenPayload;
     } catch (err) {
+      console.error("Token verification error:", err);
       throw new ApiError("Unable to verify token", 401);
-      console.log(err);
     }
   }
 }

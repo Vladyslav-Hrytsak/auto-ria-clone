@@ -14,4 +14,11 @@ router.patch(
   adminController.assignManager,
 );
 
+router.patch(
+  "/users/:id/delete-manager",
+  authMiddleware.checkAccessToken,
+  checkPermission([Permissions.ROLE_MANAGE]),
+  adminController.deleteManager,
+);
+
 export const adminRouter = router;

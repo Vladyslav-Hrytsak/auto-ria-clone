@@ -1,7 +1,7 @@
+import { RolesEnum } from "../enums/roles.enum";
 import { IUser } from "../interfaces/user.interface";
 import { User } from "../models/user.model";
-import {RolesEnum} from "../enums/roles.enum";
-import {roleRepository} from "./role.repository";
+import { roleRepository } from "./role.repository";
 
 class UserRepository {
   async findByEmail(email: string): Promise<IUser | null> {
@@ -16,7 +16,11 @@ class UserRepository {
     return await User.findById(id).select("+password");
   }
 
-  async findById(id: string): Promise<IUser | null> {
+  public async deleteById(id: string): Promise<void> {
+    await User.deleteOne({ _id: id });
+  }
+
+  public async findById(id: string): Promise<IUser | null> {
     return await User.findById(id);
   }
 

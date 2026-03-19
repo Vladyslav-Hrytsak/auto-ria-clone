@@ -19,6 +19,22 @@ class AdminController {
       next(e);
     }
   }
+
+  public async deleteManager(
+    req: AuthRequest,
+    res: Response,
+    next: NextFunction,
+  ) {
+    try {
+      const { id } = req.params;
+
+      const result = await adminService.deleteManager(id);
+
+      res.json(result);
+    } catch (e) {
+      next(e);
+    }
+  }
 }
 
 export const adminController = new AdminController();

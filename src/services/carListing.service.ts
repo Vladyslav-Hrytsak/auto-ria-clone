@@ -59,6 +59,15 @@ class CarListingService {
       editAttempts: 0,
     });
 
+    await sendGridService.sendByType(
+      user.email,
+      EmailTypeEnum.LISTING_APPROVED,
+      {
+        carTitle: listing.title,
+        frontUrl: process.env.FRONT_URL,
+      },
+    );
+
     return listing;
   }
 
@@ -181,6 +190,27 @@ class CarListingService {
     await s3Service.deleteFile(url);
 
     return await carListingRepository.removePhoto(listingId, url);
+  }
+
+  public async deleteListing(user: IUser, listingId: string) {
+    const listing = await carListingRepository.findById(listingId);
+
+    if (!listing) throw new ApiError("Listing not found", 404);
+
+    if (listing.seller.toString() !== user._id.toString()) {
+      throw new ApiError("Forbidden", 403);
+    }
+
+    await carListingRepository.deleteById(listingId);
+
+    await sendGridService.sendByType(
+      user.email,
+      EmailTypeEnum.LISTING_DELETED,
+      {
+        carTitle: listing.title,
+        frontUrl: process.env.FRONT_URL,
+      },
+    );
   }
 }
 

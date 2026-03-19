@@ -30,4 +30,16 @@ router.put(
   userController.deleteAvatar,
 );
 
+router.delete(
+  "/me/delete",
+  authMiddleware.checkAccessToken,
+  userController.deleteAccount,
+);
+
+router.delete(
+  "/me/delete-listing",
+  authMiddleware.checkAccessToken,
+  userController.deleteListing,
+);
+
 export const userRouter = router;

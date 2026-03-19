@@ -9,6 +9,7 @@ export type emailTypeToPayload = {
     "name" | "frontUrl" | "actionToken"
   >;
   [EmailTypeEnum.DELETE]: PickRequired<
+    //+
     EmailCombinedPayloadType,
     "name" | "frontUrl" | "actionToken"
   >;
@@ -17,18 +18,15 @@ export type emailTypeToPayload = {
     EmailCombinedPayloadType,
     "name" | "frontUrl"
   >;
-  [EmailTypeEnum.MANAGER_REVIEW]: PickRequired<
-    EmailCombinedPayloadType,
-    "name" | "frontUrl" | "sellerName" | "sellerId" | "listingId"
-  >;
   [EmailTypeEnum.VERIFIED]: PickRequired<
     //+
     EmailCombinedPayloadType,
     "actionToken" | "frontUrl"
   >;
   [EmailTypeEnum.LISTING_APPROVED]: PickRequired<
+    //+
     EmailCombinedPayloadType,
-    "carTitle" | "frontUrl" | "listingId"
+    "carTitle" | "frontUrl"
   >;
   [EmailTypeEnum.LISTING_EDITING]: PickRequired<
     //+
@@ -40,10 +38,10 @@ export type emailTypeToPayload = {
     EmailCombinedPayloadType,
     "carTitle" | "frontUrl"
   >;
-  [EmailTypeEnum.PREMIUM_ACTIVATED]: PickRequired<
-    // add endpoint
+  [EmailTypeEnum.CHANGE_ACCOUNT_TYPE]: PickRequired<
+    //+
     EmailCombinedPayloadType,
-    "expireDate" | "frontUrl"
+    "accountType" | "frontUrl"
   >;
   [EmailTypeEnum.ACCOUNT_BANNED]: PickRequired<
     //+
@@ -66,5 +64,11 @@ export type emailTypeToPayload = {
     //+
     EmailCombinedPayloadType,
     "brandName" | "modelName" | "sellerId" | "message"
+  >;
+
+  [EmailTypeEnum.LISTING_DELETED]: PickRequired<
+    //+
+    EmailCombinedPayloadType,
+    "carTitle" | "frontUrl"
   >;
 };
