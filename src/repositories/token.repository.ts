@@ -64,7 +64,7 @@ class TokenRepository {
     return await Token.countDocuments({ user: userId, isRevoked: false });
   }
 
-  public async deleteOldestToken(userId: Types.ObjectId) {
+  public async deleteOldestToken(userId: Types.ObjectId): Promise<void> {
     const oldestToken = await Token.findOne({ user: userId }).sort({
       createdAt: 1,
     });
@@ -73,8 +73,10 @@ class TokenRepository {
       await oldestToken.deleteOne();
     }
   }
-  public async revokeAllUserTokens(userId: string | Types.ObjectId) {
-    return await Token.updateMany(
+  public async revokeAllUserTokens(
+    userId: string | Types.ObjectId,
+  ): Promise<void> {
+    await Token.updateMany(
       { user: userId, isRevoked: false },
       { isRevoked: true },
     );

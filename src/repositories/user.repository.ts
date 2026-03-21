@@ -38,7 +38,7 @@ class UserRepository {
     });
   }
 
-  public async getUsersByRole(role: RolesEnum) {
+  public async getUsersByRole(role: RolesEnum): Promise<IUser[]> {
     const roleEntity = await roleRepository.findByName(role);
 
     if (!roleEntity) {
@@ -51,7 +51,7 @@ class UserRepository {
     });
   }
 
-  public async getManagers() {
+  public async getManagers(): Promise<IUser[]> {
     return await this.getUsersByRole(RolesEnum.MANAGER);
   }
 }

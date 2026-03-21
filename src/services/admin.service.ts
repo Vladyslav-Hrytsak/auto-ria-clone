@@ -1,7 +1,11 @@
+import { config } from "../config/configs";
+import { AccountType } from "../enums/accountType.enum";
+import { EmailTypeEnum } from "../enums/email-type.enum";
+import { RolesEnum } from "../enums/roles.enum";
 import { ApiError } from "../errors/api-error";
 import { roleRepository } from "../repositories/role.repository";
 import { userRepository } from "../repositories/user.repository";
-import {RolesEnum} from "../enums/roles.enum";
+import { sendGridService } from "./send-grid.service";
 
 class AdminService {
   public async assignManager(userId: string) {
@@ -47,6 +51,38 @@ class AdminService {
       message: "Manager role delete",
     };
   }
+
+  public async changeAccountType(userId: string) {
+    const user = await userRepository.findById(userId);
+
+    if (!user) {
+      throw new ApiError("User not found", 404);
+    }
+    const newType =
+      user.accountType === AccountType.PREMIUM
+        ? AccountType.BASIC
+        : AccountType.PREMIUM;
+
+    if (!Object.values(AccountType).includes(newType)) {
+      throw new ApiError("Incorrect account type in database", 400);
+    }
+    user.accountType = newType;
+    await user.save();
+
+    await sendGridService.sendByType(
+      user.email,
+      EmailTypeEnum.CHANGE_ACCOUNT_TYPE,
+      {
+        frontUrl: config.FRONT_URL,
+        accountType: newType,
+      },
+    );
+
+    return {
+      message: "Account type updated",
+      accountType: user.accountType,
+    };
+  };
 }
 
 export const adminService = new AdminService();

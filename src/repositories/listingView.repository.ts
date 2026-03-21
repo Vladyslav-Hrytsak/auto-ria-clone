@@ -1,17 +1,21 @@
+import { IListingView } from "../interfaces/listing-view.interface";
 import { ListingView } from "../models/listingView.model";
 
 class ListingViewRepository {
-  public async createView(listingId: string) {
+  public async createView(listingId: string): Promise<IListingView> {
     return await ListingView.create({
       listing: listingId,
     });
   }
 
-  public async countViews(listingId: string) {
+  public async countViews(listingId: string): Promise<number> {
     return await ListingView.countDocuments({ listing: listingId });
   }
 
-  public async countViewsSince(listingId: string, since: Date) {
+  public async countViewsSince(
+    listingId: string,
+    since: Date,
+  ): Promise<number> {
     return await ListingView.countDocuments({
       listing: listingId,
       viewedAt: { $gte: since },

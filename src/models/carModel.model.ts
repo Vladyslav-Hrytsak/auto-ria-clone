@@ -1,4 +1,5 @@
 import { model, Schema, Types } from "mongoose";
+import {ICarModel} from "../interfaces/car.interface";
 
 const CarModelSchema = new Schema(
   {
@@ -23,4 +24,4 @@ const CarModelSchema = new Schema(
 
 CarModelSchema.index({ name: 1, brand: 1 }, { unique: true });
 
-export const CarModel = model("CarModel", CarModelSchema);
+export const CarModel = model<ICarModel>("CarModel", CarModelSchema);

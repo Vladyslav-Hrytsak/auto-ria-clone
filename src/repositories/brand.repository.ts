@@ -12,7 +12,7 @@ class BrandRepository {
     return await CarModel.find({ brand: brandId }).sort({ name: 1 });
   }
 
-  public async create(name: string) {
+  public async create(name: string): Promise<ICarBrand> {
     return await Brand.create({ name });
   }
 }

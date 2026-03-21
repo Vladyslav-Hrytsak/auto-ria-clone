@@ -2,7 +2,6 @@ export enum EmailTypeEnum {
   RESET_PASSWORD = "reset-password",
   DELETE = "delete",
   OLD_VISIT = "old-visit",
-  MANAGER_REVIEW = "manager-review",
   VERIFIED = "verified",
   LISTING_APPROVED = "ad-approved",
   LISTING_EDITING = "ad-editing",
@@ -14,4 +13,5 @@ export enum EmailTypeEnum {
   BRAND_MODEL_REQUEST = "brand-model-request",
   LISTING_INACTIVE = "ad-inactive",
   LISTING_DELETED = "listing-deleted",
+  CONTACT_SELLER = "contact-seller",
 }

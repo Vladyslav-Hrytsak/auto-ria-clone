@@ -8,17 +8,24 @@ import { checkPermission } from "../middlewares/checkPermission.middleware";
 const router = Router();
 
 router.patch(
-  "/users/:id/assign-manager",
+  "/:id/assign-manager",
   authMiddleware.checkAccessToken,
   checkPermission([Permissions.ROLE_MANAGE]),
   adminController.assignManager,
 );
 
 router.patch(
-  "/users/:id/delete-manager",
+  "/:id/delete-manager",
   authMiddleware.checkAccessToken,
   checkPermission([Permissions.ROLE_MANAGE]),
   adminController.deleteManager,
+);
+
+router.patch(
+  "/:id/change-account-type",
+  authMiddleware.checkAccessToken,
+  checkPermission([Permissions.USER_CHANGE_ACCOUNT_TYPE_ANY]),
+  adminController.changeAccountType,
 );
 
 export const adminRouter = router;

@@ -44,4 +44,8 @@ export const emailTemplateConstants = {
   [EmailTypeEnum.LISTING_DELETED]: {
     templateId: "d-7ea40f4cb17c4c86908c7c7aae7c1531",
   },
+
+  [EmailTypeEnum.CONTACT_SELLER]: {
+    templateId: "d-6ac48b36076e424d907b6a12d0e2f9ac",
+  },
 };

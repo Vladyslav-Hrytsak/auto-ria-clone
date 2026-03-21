@@ -3,6 +3,11 @@ import { ListingStatus } from "../enums/listingStatus.enum";
 import { ICarListing } from "../interfaces/carListing.interface";
 import { CarListing } from "../models/carListing.model";
 
+interface IPriceAggregation {
+  _id: null;
+  avgPrice: number;
+}
+
 class CarListingRepository {
   public async countUserListings(userId: string): Promise<number> {
     return await CarListing.countDocuments({
@@ -11,18 +16,22 @@ class CarListingRepository {
     });
   }
 
-  public async deleteById(id: string) {
+  public async deleteById(id: string): Promise<ICarListing> {
     return await CarListing.findByIdAndDelete(id);
   }
 
   public async createListing(data: Partial<ICarListing>): Promise<ICarListing> {
     return await CarListing.create(data);
   }
-  public async findById(id: string) {
-    return await CarListing.findById(id);
+  public async findByIdForMassage(listingId: string): Promise<ICarListing> {
+    return await CarListing.findById(listingId).populate("seller");
   }
 
-  public async getActiveListings(query: any) {
+  public async findById(listingId: string): Promise<ICarListing> {
+    return await CarListing.findById(listingId);
+  }
+
+  public async getActiveListings(query: any): Promise<ICarListing[]> {
     const filter: any = {
       status: ListingStatus.ACTIVE,
     };
@@ -70,11 +79,11 @@ class CarListingRepository {
       .limit(limit);
   }
 
-  public getById(id) {
+  public getById(id: string): Promise<ICarListing> {
     return CarListing.findById(id).populate("brand").populate("model");
   }
 
-  public addPhotos(id, photos) {
+  public addPhotos(id: string, photos): Promise<ICarListing> {
     return CarListing.findByIdAndUpdate(
       id,
       { $push: { photos: { $each: photos } } },
@@ -90,7 +99,7 @@ class CarListingRepository {
     );
   }
 
-  public async softDelete(id: string) {
+  public async softDelete(id: string): Promise<ICarListing> {
     return await CarListing.findByIdAndUpdate(
       id,
       { status: ListingStatus.DELETED },
@@ -98,15 +107,18 @@ class CarListingRepository {
     );
   }
 
-  public async updateListing(id: string, data: any) {
+  public async updateListing(id: string, data: any): Promise<ICarListing> {
     return await CarListing.findByIdAndUpdate(id, data, { new: true });
   }
 
-  public async findPending() {
+  public async findPending(): Promise<ICarListing[]> {
     return await CarListing.find({ status: ListingStatus.PENDING });
   }
 
-  public async updateStatus(id: string, status: ListingStatus) {
+  public async updateStatus(
+    id: string,
+    status: ListingStatus,
+  ): Promise<ICarListing> {
     return await CarListing.findByIdAndUpdate(id, { status }, { new: true });
   }
 
@@ -114,8 +126,8 @@ class CarListingRepository {
     brand: string,
     model: string,
     region: string,
-  ) {
-    const result = await CarListing.aggregate([
+  ): Promise<number> {
+    const result = await CarListing.aggregate<IPriceAggregation>([
       {
         $match: {
           brand,

@@ -1,10 +1,10 @@
 import { MailDataRequired } from "@sendgrid/helpers/classes/mail";
 import SendGrid from "@sendgrid/mail";
 
+import { config } from "../config/configs";
 import { emailTemplateConstants } from "../constants/email-template.constants";
 import { EmailTypeEnum } from "../enums/email-type.enum";
 import { emailTypeToPayload } from "../types/email-type-to-payload.type";
-import {config} from "../config/configs";
 
 class SendGridService {
   constructor() {

@@ -1,6 +1,7 @@
 import { model, Schema, Types } from "mongoose";
 
 import { BrandRequestStatus } from "../enums/brandRequestStatus.enum";
+import {IBrandRequest} from "../interfaces/brand-equest.interface";
 
 const BrandRequestSchema = new Schema(
   {
@@ -50,4 +51,5 @@ BrandRequestSchema.index({
   status: 1,
 });
 
-export const BrandRequest = model("BrandRequest", BrandRequestSchema);
+
+export const BrandRequest = model<IBrandRequest>("BrandRequest", BrandRequestSchema);

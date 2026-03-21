@@ -25,4 +25,5 @@ export enum Permissions {
 
   // system
   ROLE_MANAGE = "role_manage",
+  PROFANITY_MANAGE = "profanity_manage",
 }

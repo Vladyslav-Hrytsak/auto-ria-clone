@@ -35,6 +35,22 @@ class AdminController {
       next(e);
     }
   }
+
+  public async changeAccountType(
+    req: AuthRequest,
+    res: Response,
+    next: NextFunction,
+  ) {
+    try {
+      const { id } = req.params;
+
+      const result = await adminService.changeAccountType(id);
+
+      res.json(result);
+    } catch (e) {
+      next(e);
+    }
+  }
 }
 
 export const adminController = new AdminController();

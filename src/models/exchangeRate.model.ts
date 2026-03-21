@@ -1,5 +1,7 @@
 import { model, Schema } from "mongoose";
 
+import { IExchangeRate } from "../interfaces/exchangeRates.interface";
+
 const ExchangeRateSchema = new Schema(
   {
     base: {
@@ -36,4 +38,7 @@ const ExchangeRateSchema = new Schema(
 
 // ExchangeRateSchema.index({ date: 1 }, { unique: true });
 
-export const ExchangeRate = model("ExchangeRate", ExchangeRateSchema);
+export const ExchangeRate = model<IExchangeRate>(
+  "ExchangeRate",
+  ExchangeRateSchema,
+);

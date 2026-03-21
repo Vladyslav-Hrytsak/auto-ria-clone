@@ -1,5 +1,7 @@
 import { model, Schema } from "mongoose";
 
+import { ICarBrand } from "../interfaces/car.interface";
+
 const BrandSchema = new Schema(
   {
     name: {
@@ -15,4 +17,4 @@ const BrandSchema = new Schema(
   },
 );
 
-export const Brand = model("Brand", BrandSchema);
+export const Brand = model<ICarBrand>("Brand", BrandSchema);

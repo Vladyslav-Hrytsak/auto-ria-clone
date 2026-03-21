@@ -10,6 +10,7 @@ import { brandRouter } from "./routes/brand.router";
 import { brandRequestRouter } from "./routes/brandRequest.routes";
 import { carListingRouter } from "./routes/carListing.router";
 import { userRouter } from "./routes/user.router";
+import {profanityService} from "./services/profanity.service";
 
 const app = express();
 
@@ -44,6 +45,7 @@ const start = async () => {
   try {
     await mongoose.connect(config.MONGO_URL);
     cronRunner();
+    await profanityService.init();
 
     console.log("MongoDB connected");
 

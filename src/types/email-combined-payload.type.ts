@@ -13,4 +13,5 @@ export type EmailCombinedPayloadType = {
   modelName?: string;
   message?: string;
   accountType?: string;
+  buyerPhone?: string;
 };

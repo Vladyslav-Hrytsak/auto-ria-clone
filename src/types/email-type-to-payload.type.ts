@@ -71,4 +71,10 @@ export type emailTypeToPayload = {
     EmailCombinedPayloadType,
     "carTitle" | "frontUrl"
   >;
+
+  [EmailTypeEnum.CONTACT_SELLER]: PickRequired<
+    //+
+    EmailCombinedPayloadType,
+    "carTitle" | "frontUrl" | "message" | "buyerPhone"
+  >;
 };

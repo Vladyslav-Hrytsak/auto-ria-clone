@@ -35,8 +35,11 @@ class AuthService {
       throw new ApiError("User already exists", 400);
     }
 
-    const roleEntity = await Role.findOne({ name: "seller" });
+    const buyerRole = await Role.findOne({ name: "buyer" });
 
+    if (!buyerRole) {
+      throw new ApiError("Buyer role not found", 500);
+    }
     const hashedPassword = await passwordService.hash(password);
 
     const user = await userRepository.createUser({
@@ -46,7 +49,7 @@ class AuthService {
       phone: phone ?? null,
       sellerType: sellerType ?? SellerTypeEnum.PRIVATE,
       avatar: avatar ?? null,
-      roles: [roleEntity._id],
+      roles: [buyerRole._id],
       accountType: AccountType.BASIC,
     });
 
@@ -62,7 +65,7 @@ class AuthService {
     });
 
     const verifyToken = tokenService.generateResetToken(
-      { userId: user._id.toString(), role: roleEntity.name as RolesEnum },
+      { userId: user._id.toString(), role: buyerRole.name as RolesEnum },
       ActionTokenTypeEnum.VERIFY,
     );
     await actionTokenRepository.create({

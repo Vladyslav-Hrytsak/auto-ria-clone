@@ -9,9 +9,6 @@ import { actionTokenRepository } from "../repositories/action-token.repository";
 import { tokenRepository } from "../repositories/token.repository";
 import { userRepository } from "../repositories/user.repository";
 import { tokenService } from "../services/token.service";
-// import { IAccessTokenPayload } from "../interfaces/token.interface";
-// import { userRepository } from "../repositories/user.repository";
-// import { jwtService } from "../services/jwt.service";
 
 class AuthMiddleware {
   public async checkAccessToken(
@@ -126,33 +123,3 @@ class AuthMiddleware {
 }
 
 export const authMiddleware = new AuthMiddleware();
-
-// export const authMiddleware = async (
-//   req: AuthRequest,
-//   res: Response,
-//   next: NextFunction,
-// ) => {
-//   try {
-//     const authHeader = req.headers.authorization;
-//
-//     if (!authHeader || !authHeader.startsWith("Bearer ")) {
-//       return next(new ApiError("Unauthorized", 401));
-//     }
-//
-//     const token = authHeader.split(" ")[1];
-//
-//     const decoded = jwtService.verifyAccessToken(token) as IAccessTokenPayload;
-//
-//     const user = await userRepository.findById(decoded.id);
-//
-//     if (!user) {
-//       return next(new ApiError("User not found", 404));
-//     }
-//
-//     req.user = user;
-//
-//     next();
-//   } catch (error) {
-//     next(error);
-//   }
-// };

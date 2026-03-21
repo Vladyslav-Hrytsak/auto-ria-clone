@@ -1,40 +1,27 @@
-class ProfanityService {
-  private badWords: string[] = [
-    // English
-    "shit",
-    "fuck",
-    "bitch",
-    "asshole",
-    "damn",
-    "cunt",
-    "dick",
-    "piss",
-    "bastard",
-    "motherfucker",
-    "faggot",
-    "slut",
-    "whore",
-    "bollocks",
-    "wanker",
-    "prick",
+import { ApiError } from "../errors/api-error";
+import { profanityRepository } from "../repositories/profanity.repository";
 
-    // Ukrainian
-    "хуй",
-    "пизда",
-    "їбати",
-    "блядь",
-    "сука",
-    "курва",
-    "гімно",
-    "падло",
-    "залупа",
-    "манда",
-    "мудак",
-    "виродок",
-    "дупа",
-    "сволота",
-    "гніда",
-  ];
+class ProfanityService {
+  private badWords: string[] = [];
+
+  private fallbackWords: string[] = ["shit", "fuck", "bitch", "хуй", "пизда"];
+
+  public async init() {
+    const words = await profanityRepository.getAll();
+
+    if (!words.length) {
+      console.warn("⚠️ Profanity DB empty, using fallback");
+      this.badWords = this.fallbackWords;
+    } else {
+      this.badWords = words;
+    }
+
+    console.log("Profanity loaded:", this.badWords.length);
+  }
+
+  public async refresh() {
+    this.badWords = await profanityRepository.getAll();
+  }
 
   private normalize(text: string) {
     return text.toLowerCase().trim();
@@ -56,6 +43,22 @@ class ProfanityService {
     return {
       hasProfanity: found.size > 0,
       words: Array.from(found),
+    };
+  }
+
+  public async addWord(word: string) {
+    const normalized = word.toLowerCase().trim();
+
+    if (!normalized) {
+      throw new ApiError("Word is required", 400);
+    }
+
+    await profanityRepository.create(normalized);
+
+    await this.refresh();
+
+    return {
+      message: "Word added",
     };
   }
 }

@@ -1,20 +1,24 @@
+import { BrandRequestStatus } from "../enums/brandRequestStatus.enum";
+import { IBrandRequest } from "../interfaces/brand-equest.interface";
 import { BrandRequest } from "../models/brandRequest.model";
-import {BrandRequestStatus} from "../enums/brandRequestStatus.enum";
 
 class BrandRequestRepository {
-  public async create(data: any) {
+  public async create(data: any): Promise<IBrandRequest> {
     return await BrandRequest.create(data);
   }
 
-  public async findById(id: string) {
+  public async findById(id: string): Promise<IBrandRequest> {
     return await BrandRequest.findById(id);
   }
 
-  public async findAllPending() {
+  public async findAllPending(): Promise<IBrandRequest[]> {
     return await BrandRequest.find({ status: "pending" });
   }
 
-  public async updateStatus(requestId: string, status: BrandRequestStatus) {
+  public async updateStatus(
+    requestId: string,
+    status: BrandRequestStatus,
+  ): Promise<IBrandRequest> {
     return await BrandRequest.findByIdAndUpdate(
       requestId,
       { status },
@@ -22,7 +26,7 @@ class BrandRequestRepository {
     );
   }
 
-  public async deleteById(id: string) {
+  public async deleteById(id: string): Promise<IBrandRequest> {
     return await BrandRequest.findByIdAndDelete(id);
   }
 }

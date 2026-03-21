@@ -1,9 +1,6 @@
-import { model, Schema, Types } from "mongoose";
+import { model, Schema } from "mongoose";
 
-export interface IListingView {
-  listing: Types.ObjectId;
-  viewedAt: Date;
-}
+import { IListingView } from "../interfaces/listing-view.interface";
 
 const ListingViewSchema = new Schema<IListingView>({
   listing: {
