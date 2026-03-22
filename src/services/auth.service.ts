@@ -8,6 +8,7 @@ import { SellerTypeEnum } from "../enums/sellerType.enum";
 import { TokenTypeEnum } from "../enums/token-type.enum";
 import { ApiError } from "../errors/api-error";
 import { RegisterDto } from "../interfaces/registerDto.interface";
+import { IRole } from "../interfaces/role.interface";
 import { ITokenPayload } from "../interfaces/token.interface";
 import {
   IChangePassword,
@@ -35,7 +36,7 @@ class AuthService {
       throw new ApiError("User already exists", 400);
     }
 
-    const buyerRole = await Role.findOne({ name: "buyer" });
+    const buyerRole: IRole = await Role.findOne({ name: "buyer" });
 
     if (!buyerRole) {
       throw new ApiError("Buyer role not found", 500);

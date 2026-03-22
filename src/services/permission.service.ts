@@ -10,7 +10,7 @@ class PermissionService {
     const rolePermissions: IRolePermission[] =
       await permissionRepository.findPermissionsByRoles(roleIds);
 
-    return rolePermissions.map((rp) => {
+    return rolePermissions.map((rp): string => {
       const permission = rp.permission as any;
       return permission.name;
     });

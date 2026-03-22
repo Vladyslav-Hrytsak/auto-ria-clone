@@ -1,6 +1,7 @@
-import { ListingSort } from "../enums/listingSort.enum";
 import { ListingStatus } from "../enums/listingStatus.enum";
+import { OrderEnum } from "../enums/order.enum";
 import { ICarListing } from "../interfaces/carListing.interface";
+import { IListingQuery } from "../interfaces/listingQuery.interface";
 import { CarListing } from "../models/carListing.model";
 
 interface IPriceAggregation {
@@ -31,7 +32,9 @@ class CarListingRepository {
     return await CarListing.findById(listingId);
   }
 
-  public async getActiveListings(query: any): Promise<ICarListing[]> {
+  public async getActiveListings(
+    query: IListingQuery,
+  ): Promise<[ICarListing[], number]> {
     const filter: any = {
       status: ListingStatus.ACTIVE,
     };
@@ -43,40 +46,30 @@ class CarListingRepository {
     if (query.priceFrom || query.priceTo) {
       filter.priceUSD = {};
 
-      if (query.priceFrom) filter.priceUSD.$gte = Number(query.priceFrom);
-
-      if (query.priceTo) filter.priceUSD.$lte = Number(query.priceTo);
+      if (query.priceFrom) filter.priceUSD.$gte = query.priceFrom;
+      if (query.priceTo) filter.priceUSD.$lte = query.priceTo;
     }
 
-    const page = Number(query.page) || 1;
-    const limit = Number(query.limit) || 10;
+    const limit = query.limit;
+    const page = query.page;
+    const skip = limit * (page - 1);
 
-    let sort: any = { createdAt: -1 };
+    const sortOrder = query.order === OrderEnum.ASC ? 1 : -1;
+    const sortField = query.orderBy;
 
-    switch (query.sort) {
-      case ListingSort.OLDEST:
-        sort = { createdAt: 1 };
-        break;
+    const sort = { [sortField]: sortOrder };
 
-      case ListingSort.PRICE_ASC:
-        sort = { priceUSD: 1 };
-        break;
+    return await Promise.all([
+      CarListing.find(filter)
+        .populate("brand")
+        .populate("model")
+        .limit(limit)
+        .skip(skip)
+        .sort(sort as any)
+        .lean(),
 
-      case ListingSort.PRICE_DESC:
-        sort = { priceUSD: -1 };
-        break;
-
-      case ListingSort.VIEWS:
-        sort = { viewsCount: -1 };
-        break;
-    }
-
-    return await CarListing.find(filter)
-      .populate("brand")
-      .populate("model")
-      .sort(sort)
-      .skip((page - 1) * limit)
-      .limit(limit);
+      CarListing.countDocuments(filter),
+    ]);
   }
 
   public getById(id: string): Promise<ICarListing> {

@@ -2,6 +2,8 @@ import { RolesEnum } from "../enums/roles.enum";
 import { IUser } from "../interfaces/user.interface";
 import { User } from "../models/user.model";
 import { roleRepository } from "./role.repository";
+import {Role} from "../models/role.model";
+import {ApiError} from "../errors/api-error";
 
 class UserRepository {
   async findByEmail(email: string): Promise<IUser | null> {
@@ -53,6 +55,22 @@ class UserRepository {
 
   public async getManagers(): Promise<IUser[]> {
     return await this.getUsersByRole(RolesEnum.MANAGER);
+  }
+
+  public async addRole(userId: string, roleName: string) {
+    const role = await Role.findOne({ name: roleName });
+
+    if (!role) {
+      throw new ApiError("Role not found", 404);
+    }
+
+    return await User.findByIdAndUpdate(
+      userId,
+      {
+        $addToSet: { roles: role._id },
+      },
+      { new: true },
+    );
   }
 }
 

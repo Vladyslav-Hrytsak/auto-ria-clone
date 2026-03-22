@@ -8,6 +8,8 @@ import { ApiError } from "../errors/api-error";
 import { ICarListing } from "../interfaces/carListing.interface";
 import { IUser } from "../interfaces/user.interface";
 import { carListingRepository } from "../repositories/carListing.repository";
+import { roleRepository } from "../repositories/role.repository";
+import { userRepository } from "../repositories/user.repository";
 import { currencyService } from "./currency.service";
 import { profanityService } from "./profanity.service";
 import { s3Service } from "./s3.service";
@@ -24,7 +26,7 @@ class CarListingService {
     }
   }
 
-  public async createListing(user: IUser, data: any) {
+  public async createListing(user: IUser, data: any): Promise<ICarListing> {
     await this.checkListingLimit(user);
 
     const { brand, model, region, description, title, price, currency } = data;
@@ -67,6 +69,16 @@ class CarListingService {
         frontUrl: process.env.FRONT_URL,
       },
     );
+
+    const sellerRole = await roleRepository.findByName("seller");
+
+    const hasSellerRole = user.roles.some(
+      (r) => r.toString() === sellerRole._id.toString(),
+    );
+
+    if (!hasSellerRole) {
+      await userRepository.addRole(user._id.toString(), "seller");
+    }
 
     return listing;
   }

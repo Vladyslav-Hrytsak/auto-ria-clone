@@ -1,4 +1,5 @@
 import { EmailTypeEnum } from "../enums/email-type.enum";
+import { IBrandRequest } from "../interfaces/brand-request.interface";
 import { BrandRequest } from "../models/brandRequest.model";
 import { userRepository } from "../repositories/user.repository";
 import { sendGridService } from "./send-grid.service";
@@ -9,7 +10,7 @@ class BrandRequestService {
     modelName: string,
     message: string,
     userId: string,
-  ) {
+  ): Promise<IBrandRequest> {
     const request = await BrandRequest.create({
       brandName,
       modelName,

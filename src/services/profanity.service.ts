@@ -10,7 +10,7 @@ class ProfanityService {
     const words = await profanityRepository.getAll();
 
     if (!words.length) {
-      console.warn("⚠️ Profanity DB empty, using fallback");
+      console.warn("Profanity DB empty, using fallback");
       this.badWords = this.fallbackWords;
     } else {
       this.badWords = words;
@@ -27,7 +27,10 @@ class ProfanityService {
     return text.toLowerCase().trim();
   }
 
-  public checkTexts(texts: string[]) {
+  public checkTexts(texts: string[]): {
+    hasProfanity: boolean;
+    words: string[];
+  } {
     const found = new Set<string>();
 
     for (const text of texts) {

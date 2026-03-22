@@ -24,13 +24,15 @@ const userSchema = new mongoose.Schema(
       type: String,
     },
 
-    roles: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Role",
-        required: true,
-      },
-    ],
+    roles: {
+      type: [
+        {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Role",
+        },
+      ],
+      default: [],
+    },
 
     accountType: {
       type: String,

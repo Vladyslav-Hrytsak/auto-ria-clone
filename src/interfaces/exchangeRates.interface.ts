@@ -7,3 +7,16 @@ export interface IExchangeRate extends Document {
   createdAt: Date;
   updatedAt: Date;
 }
+
+export interface IPrivatBankCurrency {
+  ccy: string;
+  base_ccy: string;
+  buy: string;
+  sale: string;
+}
+
+export interface IRates {
+  usd: number;
+  eur: number;
+  date: Date;
+}

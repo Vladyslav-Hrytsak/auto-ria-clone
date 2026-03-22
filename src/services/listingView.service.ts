@@ -1,3 +1,4 @@
+import { IViewsStats } from "../interfaces/listing-view.interface";
 import { CarListing } from "../models/carListing.model";
 import { listingViewRepository } from "../repositories/listingView.repository";
 
@@ -8,7 +9,7 @@ class ListingViewService {
     });
   }
 
-  public async getViewsStats(listingId: string) {
+  public async getViewsStats(listingId: string): Promise<IViewsStats> {
     const now = new Date();
 
     const day = new Date(now);

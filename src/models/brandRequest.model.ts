@@ -1,7 +1,7 @@
 import { model, Schema, Types } from "mongoose";
 
 import { BrandRequestStatus } from "../enums/brandRequestStatus.enum";
-import {IBrandRequest} from "../interfaces/brand-equest.interface";
+import {IBrandRequest} from "../interfaces/brand-request.interface";
 
 const BrandRequestSchema = new Schema(
   {

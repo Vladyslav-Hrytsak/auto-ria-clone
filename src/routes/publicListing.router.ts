@@ -1,11 +1,27 @@
 import { Router } from "express";
 
 import { publicListingController } from "../controllers/publicListing.controller";
+import { validationMiddleware } from "../middlewares/validate.middelware";
+import { listingQueryValidator } from "../validators/listing.validator";
 
 const router = Router();
 
-router.get("/", publicListingController.getAll);
+/**
+ * GET ALL LISTINGS
+ */
+router.get(
+  "/",
+  validationMiddleware.validateQuery(listingQueryValidator),
+  publicListingController.getAll,
+);
 
-router.get("/:id", publicListingController.getById);
+/**
+ * GET BY ID
+ */
+router.get(
+  "/:id",
+  validationMiddleware.isIdValid("id"),
+  publicListingController.getById,
+);
 
 export const publicListingRouter = router;

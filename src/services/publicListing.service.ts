@@ -1,15 +1,21 @@
 import { ListingStatus } from "../enums/listingStatus.enum";
 import { ApiError } from "../errors/api-error";
+import { IListingQuery } from "../interfaces/listingQuery.interface";
 import { carListingRepository } from "../repositories/carListing.repository";
 import { listingViewService } from "./listingView.service";
 
 class PublicListingService {
-  public async getAll(query: any) {
-    const listings = await carListingRepository.getActiveListings(query);
+  public async getListings(query: IListingQuery) {
+    const [data, total] = await carListingRepository.getActiveListings(query);
 
-    return listings;
+    return {
+      data,
+      total,
+      page: query.page,
+      limit: query.limit,
+      totalPages: Math.ceil(total / query.limit),
+    };
   }
-
   public async getById(id: string) {
     const listing = await carListingRepository.findById(id);
 

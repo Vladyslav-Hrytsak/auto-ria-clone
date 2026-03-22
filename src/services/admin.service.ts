@@ -82,7 +82,7 @@ class AdminService {
       message: "Account type updated",
       accountType: user.accountType,
     };
-  };
+  }
 }
 
 export const adminService = new AdminService();

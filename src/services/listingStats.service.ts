@@ -1,10 +1,11 @@
 import { AccountType } from "../enums/accountType.enum";
 import { ApiError } from "../errors/api-error";
+import {IListingAnalytics, IViewsStats} from "../interfaces/listing-view.interface";
 import { carListingRepository } from "../repositories/carListing.repository";
 import { listingViewService } from "./listingView.service";
 
 class ListingStatsService {
-  public async getStats(user: any, listingId: string) {
+  public async getStats(user: any, listingId: string): Promise<IListingAnalytics> {
     const listing = await carListingRepository.findById(listingId);
 
     if (!listing) {
@@ -28,7 +29,8 @@ class ListingStatsService {
     /**
      * перегляди
      */
-    const views = await listingViewService.getViewsStats(listingId);
+    const views: IViewsStats =
+      await listingViewService.getViewsStats(listingId);
 
     /**
      * середня ціна регіон

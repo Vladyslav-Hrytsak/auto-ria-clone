@@ -1,5 +1,5 @@
 import { BrandRequestStatus } from "../enums/brandRequestStatus.enum";
-import { IBrandRequest } from "../interfaces/brand-equest.interface";
+import { IBrandRequest } from "../interfaces/brand-request.interface";
 import { BrandRequest } from "../models/brandRequest.model";
 
 class BrandRequestRepository {
