@@ -271,7 +271,6 @@ class AuthService {
     dto: IChangePassword,
   ): Promise<void> {
     const user = await userRepository.getByID(jwtPayload.userId);
-
     if (!user) {
       throw new ApiError("User not found", 404);
     }
@@ -328,7 +327,7 @@ class AuthService {
   }
 
   public async verifyUser(jwtPayload: ITokenPayload): Promise<void> {
-    const user = await userRepository.getByID(jwtPayload.userId);
+    const user = await userRepository.findById(jwtPayload.userId);
 
     if (!user) {
       throw new ApiError("User not found", 404);

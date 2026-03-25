@@ -1,7 +1,7 @@
 import { NextFunction, Response } from "express";
 import { UploadedFile } from "express-fileupload";
 
-import { ITokenPayload } from "../interfaces/token.interface";
+import { ApiError } from "../errors/api-error";
 import { userPresenter } from "../presenters /user.presenter";
 import { carListingService } from "../services/carListing.service";
 import { userService } from "../services/user.service";
@@ -30,8 +30,8 @@ class UserController {
     next: NextFunction,
   ) {
     try {
-      const jwtPayload = req.res.locals.jwtPayload as ITokenPayload;
-      const user = await userService.deleteAccount(jwtPayload);
+      const userId = req.user._id.toString();
+      const user = await userService.deleteAccount(userId);
       const result = userPresenter.toPublicResDto(user);
       res.status(201).json(result);
     } catch (err) {
@@ -62,10 +62,15 @@ class UserController {
     next: NextFunction,
   ) {
     try {
-      const jwtPayload = req.res.locals.jwtPayload as ITokenPayload;
-      const user = await userService.deleteAvatar(jwtPayload);
+      if (!req.user) {
+        throw new ApiError("Unauthorized", 401);
+      }
+
+      const userId = req.user._id.toString();
+
+      const user = await userService.deleteAvatar(userId);
       const result = userPresenter.toPublicResDto(user);
-      res.status(201).json(result);
+      res.status(200).json(result);
     } catch (err) {
       next(err);
     }

@@ -1,5 +1,6 @@
 import { model, Schema, Types } from "mongoose";
-import {ICarModel} from "../interfaces/car.interface";
+
+import { ICarModel } from "../interfaces/car.interface";
 
 const CarModelSchema = new Schema(
   {

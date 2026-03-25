@@ -27,7 +27,6 @@ class AuthMiddleware {
         accessToken,
         TokenTypeEnum.ACCESS,
       );
-
       const user = await userRepository.getByID(payload.userId);
 
       if (!user) {

@@ -1,8 +1,8 @@
 import mongoose from "mongoose";
 
+import { config } from "../config/configs";
 import { CarBrand } from "../models/carBrand.model";
-import { CarModel } from "../models/carModel";
-import {config} from "../config/configs";
+import { CarModel } from "../models/carModel.model";
 
 const cars = [
   {

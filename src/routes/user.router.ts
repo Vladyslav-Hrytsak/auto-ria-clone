@@ -10,7 +10,7 @@ import { fileMiddleware } from "../middlewares/file.middleware";
 const router = Router();
 
 router.patch(
-  "/account-type",
+  "/me/account-type",
   authMiddleware.checkAccessToken,
   banMiddleware,
   checkPermission([Permissions.USER_UPGRADE_ACCOUNT]),
@@ -37,7 +37,7 @@ router.delete(
 );
 
 router.delete(
-  "/me/delete-listing",
+  "/me/delete-listing/:id",
   authMiddleware.checkAccessToken,
   userController.deleteListing,
 );

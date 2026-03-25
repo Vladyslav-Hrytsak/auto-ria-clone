@@ -1,9 +1,9 @@
 import { RolesEnum } from "../enums/roles.enum";
+import { ApiError } from "../errors/api-error";
 import { IUser } from "../interfaces/user.interface";
+import { Role } from "../models/role.model";
 import { User } from "../models/user.model";
 import { roleRepository } from "./role.repository";
-import {Role} from "../models/role.model";
-import {ApiError} from "../errors/api-error";
 
 class UserRepository {
   async findByEmail(email: string): Promise<IUser | null> {

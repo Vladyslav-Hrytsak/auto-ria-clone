@@ -1,5 +1,4 @@
 import { ICarBrand, ICarModel } from "../interfaces/car.interface";
-import { Brand } from "../models/brand.model";
 import { CarBrand } from "../models/carBrand.model";
 import { CarModel } from "../models/carModel.model";
 
@@ -13,7 +12,7 @@ class BrandRepository {
   }
 
   public async create(name: string): Promise<ICarBrand> {
-    return await Brand.create({ name });
+    return await CarBrand.create({ name });
   }
 }
 

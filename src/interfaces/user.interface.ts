@@ -19,7 +19,7 @@ export interface IUser extends Document {
   updatedAt: Date;
 }
 
-export type ISignIn = Pick<IUser, "email" | "password">;
+// export type ISignIn = Pick<IUser, "email" | "password">;
 export type IResetPasswordSend = Pick<IUser, "email">;
 export type IResetPasswordSet = Pick<IUser, "password"> & { token: string };
 export type IChangePassword = Pick<IUser, "password"> & { newPassword: string };

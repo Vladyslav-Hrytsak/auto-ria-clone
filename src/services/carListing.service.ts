@@ -97,14 +97,11 @@ class CarListingService {
     }
 
     const { brand, model, region, description, title, price, currency } = data;
+    const textsToCheck = [brand, model, region, description, title].filter(
+      (text) => typeof text === "string",
+    );
 
-    const profanityCheck = profanityService.checkTexts([
-      brand,
-      model,
-      region,
-      description,
-      title,
-    ]);
+    const profanityCheck = profanityService.checkTexts(textsToCheck);
 
     let status = ListingStatus.ACTIVE;
     let attempts = listing.editAttempts;

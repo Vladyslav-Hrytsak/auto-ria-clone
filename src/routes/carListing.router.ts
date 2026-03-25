@@ -1,5 +1,4 @@
 import { Router } from "express";
-import Joi from "joi";
 
 import { carListingController } from "../controllers/carListing.controller";
 import { Permissions } from "../enums/permissions.enum";
@@ -7,20 +6,14 @@ import { authMiddleware } from "../middlewares/auth.middleware";
 import { banMiddleware } from "../middlewares/ban.middleware";
 import { checkPermission } from "../middlewares/checkPermission.middleware";
 import { fileMiddleware } from "../middlewares/file.middleware";
+import { validationMiddleware } from "../middlewares/validate.middelware";
 import {
   createListingValidator,
   updateListingValidator,
 } from "../validators/listing.validator";
-import {validationMiddleware} from "../middlewares/validate.middelware";
+import { deletePhotoValidator } from "../validators/user.validator";
 
 const router = Router();
-
-/**
- * DELETE PHOTO VALIDATOR
- */
-const deletePhotoValidator = Joi.object({
-  url: Joi.string().required(),
-});
 
 /**
  * CREATE LISTING
@@ -30,7 +23,7 @@ router.post(
   authMiddleware.checkAccessToken,
   banMiddleware,
   validationMiddleware.validateBody(createListingValidator),
-  checkPermission([Permissions.LISTING_CREATE]),
+  // checkPermission([Permissions.LISTING_CREATE]),
   carListingController.createListing,
 );
 

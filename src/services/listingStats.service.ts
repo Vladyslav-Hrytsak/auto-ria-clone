@@ -1,11 +1,17 @@
 import { AccountType } from "../enums/accountType.enum";
 import { ApiError } from "../errors/api-error";
-import {IListingAnalytics, IViewsStats} from "../interfaces/listing-view.interface";
+import {
+  IListingAnalytics,
+  IViewsStats,
+} from "../interfaces/listing-view.interface";
 import { carListingRepository } from "../repositories/carListing.repository";
 import { listingViewService } from "./listingView.service";
 
 class ListingStatsService {
-  public async getStats(user: any, listingId: string): Promise<IListingAnalytics> {
+  public async getStats(
+    user: any,
+    listingId: string,
+  ): Promise<IListingAnalytics> {
     const listing = await carListingRepository.findById(listingId);
 
     if (!listing) {

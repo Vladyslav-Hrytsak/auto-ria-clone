@@ -72,6 +72,44 @@ class CarListingRepository {
     ]);
   }
 
+  public async getPendingListings(
+    query: IListingQuery,
+  ): Promise<[ICarListing[], number]> {
+    const filter: any = {
+      status: ListingStatus.PENDING,
+    };
+
+    if (query.brand) filter.brand = query.brand;
+    if (query.model) filter.model = query.model;
+    if (query.region) filter.region = query.region;
+
+    if (query.priceFrom || query.priceTo) {
+      filter.priceUSD = {};
+      if (query.priceFrom) filter.priceUSD.$gte = query.priceFrom;
+      if (query.priceTo) filter.priceUSD.$lte = query.priceTo;
+    }
+
+    const limit = query.limit || 10; // добавил дефолты на всякий случай
+    const page = query.page || 1;
+    const skip = limit * (page - 1);
+
+    const sortOrder = query.order === OrderEnum.ASC ? 1 : -1;
+    const sortField = query.orderBy || "createdAt"; // дефолтная сортировка по дате
+    const sort = { [sortField]: sortOrder };
+
+    return await Promise.all([
+      CarListing.find(filter)
+        .populate("brand")
+        .populate("model")
+        .limit(limit)
+        .skip(skip)
+        .sort(sort as any)
+        .lean(),
+
+      CarListing.countDocuments(filter),
+    ]);
+  }
+
   public getById(id: string): Promise<ICarListing> {
     return CarListing.findById(id).populate("brand").populate("model");
   }
@@ -102,10 +140,6 @@ class CarListingRepository {
 
   public async updateListing(id: string, data: any): Promise<ICarListing> {
     return await CarListing.findByIdAndUpdate(id, data, { new: true });
-  }
-
-  public async findPending(): Promise<ICarListing[]> {
-    return await CarListing.find({ status: ListingStatus.PENDING });
   }
 
   public async updateStatus(

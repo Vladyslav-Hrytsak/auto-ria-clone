@@ -9,11 +9,10 @@ import { checkPermission } from "../middlewares/checkPermission.middleware";
 const router = Router();
 
 router.post(
-  "/brands-request",
+  "/",
   authMiddleware.checkAccessToken,
   banMiddleware,
   checkPermission([Permissions.BRAND_REQUEST_CREATE]),
-
   brandRequestController.createRequest,
 );
 

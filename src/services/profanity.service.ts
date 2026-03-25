@@ -58,7 +58,7 @@ class ProfanityService {
 
     await profanityRepository.create(normalized);
 
-    await this.refresh();
+    // await this.refresh();
 
     return {
       message: "Word added",

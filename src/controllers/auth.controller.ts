@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 
+import { ApiError } from "../errors/api-error";
 import { getTokenFromHeader } from "../helper/getTokenFromHeader";
 import { ITokenPayload } from "../interfaces/token.interface";
 import {
@@ -8,6 +9,8 @@ import {
   IResetPasswordSet,
 } from "../interfaces/user.interface";
 import { authService } from "../services/auth.service";
+import { AuthRequest } from "../types/authRequest.interface";
+import {RolesEnum} from "../enums/roles.enum";
 
 class AuthController {
   async register(req: Request, res: Response, next: NextFunction) {
@@ -96,11 +99,27 @@ class AuthController {
       next(err);
     }
   }
-  public async changePassword(req: Request, res: Response, next: NextFunction) {
+  public async changePassword(
+    req: AuthRequest,
+    res: Response,
+    next: NextFunction,
+  ) {
     try {
-      const jwtPayload = req.res.locals.jwtPayload as ITokenPayload;
+      const user = req.user;
+
+      if (!user) {
+        throw new ApiError("Unauthorized", 401);
+      }
+
+      const jwtPayload: ITokenPayload = {
+        userId: user._id.toString(),
+        role: user.roles[0].toString() as unknown as RolesEnum,
+      };
+
       const dto = req.body as IChangePassword;
+
       await authService.changePassword(jwtPayload, dto);
+
       res.status(204).send();
     } catch (error) {
       next(error);

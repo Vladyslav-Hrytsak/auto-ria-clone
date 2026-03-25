@@ -17,7 +17,7 @@ class ContactService {
     if (!listing) {
       throw new ApiError("Listing not found", 404);
     }
-    const sellerId = listing.seller.toString();
+    const sellerId = listing.seller._id.toString();
     const seller = await userRepository.findById(sellerId);
 
     if (!seller) {
@@ -35,7 +35,7 @@ class ContactService {
       seller.email,
       EmailTypeEnum.CONTACT_SELLER,
       {
-        carTitle: `${listing.brand} ${listing.model}`,
+        carTitle: listing.title,
         message: dto.message,
         buyerPhone: dto.phone || "Not provided",
         frontUrl: config.FRONT_URL,

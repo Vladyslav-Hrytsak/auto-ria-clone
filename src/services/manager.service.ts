@@ -10,7 +10,7 @@ import { userRepository } from "../repositories/user.repository";
 import { sendGridService } from "./send-grid.service";
 
 class ManagerService {
-  public async deleteListing(listingId: string) {
+  public async softDeleteListing(listingId: string) {
     const listing = await carListingRepository.findById(listingId);
 
     if (!listing) {
@@ -18,6 +18,21 @@ class ManagerService {
     }
 
     const updated = await carListingRepository.softDelete(listingId);
+
+    return {
+      message: "Listing soft deleted",
+      data: updated,
+    };
+  }
+
+  public async deleteListing(listingId: string) {
+    const listing = await carListingRepository.findById(listingId);
+
+    if (!listing) {
+      throw new ApiError("Listing not found", 404);
+    }
+
+    const updated = await carListingRepository.deleteById(listingId);
 
     return {
       message: "Listing soft deleted",
@@ -108,8 +123,16 @@ class ManagerService {
     };
   }
 
-  public async getPendingListings() {
-    return await carListingRepository.findPending();
+  public async getPendingListings(query) {
+    const [data, total] = await carListingRepository.getPendingListings(query);
+
+    return {
+      data,
+      total,
+      page: query.page,
+      limit: query.limit,
+      totalPages: Math.ceil(total / query.limit),
+    };
   }
 
   public async changeListingStatus(listingId: string, status: ListingStatus) {

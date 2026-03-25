@@ -5,6 +5,7 @@ import { authMiddleware } from "../middlewares/auth.middleware";
 import { validationMiddleware } from "../middlewares/validate.middelware";
 import {
   changePassword,
+  changePasswordFromUser,
   forgotPasswordValidator,
   loginValidator,
   registerValidator,
@@ -42,7 +43,7 @@ router.post(
 /**
  * LOGOUT
  */
-router.post("/logout", authMiddleware.checkAccessToken, authController.logout);
+router.post("/logout", authMiddleware.checkRefreshToken, authController.logout);
 
 /**
  * LOGOUT ALL
@@ -78,7 +79,7 @@ router.put(
 router.post(
   "/change-password",
   authMiddleware.checkAccessToken,
-  validationMiddleware.validateBody(changePassword),
+  validationMiddleware.validateBody(changePasswordFromUser),
   authController.changePassword,
 );
 

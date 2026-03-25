@@ -8,6 +8,13 @@ import { checkPermission } from "../middlewares/checkPermission.middleware";
 const router = Router();
 
 router.delete(
+  "/soft/listings/:id",
+  authMiddleware.checkAccessToken,
+  checkPermission([Permissions.LISTING_DELETE_ANY]),
+  managerController.softDeleteListing,
+);
+
+router.delete(
   "/listings/:id",
   authMiddleware.checkAccessToken,
   checkPermission([Permissions.LISTING_DELETE_ANY]),

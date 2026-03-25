@@ -66,6 +66,19 @@ export const changePassword = Joi.object({
       "string.pattern.base":
         "The password can only contain Latin letters and numbers.",
     }),
+});
+
+export const changePasswordFromUser = Joi.object({
+  password: Joi.string()
+    .min(3)
+    .max(10)
+    .pattern(/^[a-zA-Z0-9]{3,10}$/)
+    .required()
+    .messages({
+      "string.min": "The password must be at least 3 characters long.",
+      "string.pattern.base":
+        "The password can only contain Latin letters and numbers.",
+    }),
   newPassword: Joi.string()
     .min(3)
     .max(10)
@@ -80,4 +93,8 @@ export const changePassword = Joi.object({
 
 export const forgotPasswordValidator = Joi.object({
   email: Joi.string().email().lowercase().trim().required(),
+});
+
+export const deletePhotoValidator = Joi.object({
+  url: Joi.string().required(),
 });

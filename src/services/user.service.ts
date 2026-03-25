@@ -7,7 +7,6 @@ import { EmailTypeEnum } from "../enums/email-type.enum";
 import { FileItemTypeEnum } from "../enums/file-item-type.enum";
 import { RolesEnum } from "../enums/roles.enum";
 import { ApiError } from "../errors/api-error";
-import { ITokenPayload } from "../interfaces/token.interface";
 import { IUser } from "../interfaces/user.interface";
 import { actionTokenRepository } from "../repositories/action-token.repository";
 import { userRepository } from "../repositories/user.repository";
@@ -48,8 +47,8 @@ class UserService {
     };
   }
 
-  public async deleteAccount(jwtPayload: ITokenPayload): Promise<IUser> {
-    const user = await userRepository.getByID(jwtPayload.userId);
+  public async deleteAccount(userId: string): Promise<IUser> {
+    const user = await userRepository.getByID(userId);
     if (user) {
       await userRepository.deleteById(user._id.toString());
       const deleteToken = tokenService.generateResetToken(
@@ -89,14 +88,15 @@ class UserService {
     return updateUser;
   }
 
-  public async deleteAvatar(jwtPayload: ITokenPayload): Promise<IUser> {
-    const user = await userRepository.getByID(jwtPayload.userId);
-    if (user.avatar) {
-      await s3Service.deleteFile(user.avatar);
-      return await userRepository.putByID(user._id.toString(), {
-        avatar: null,
-      });
+  public async deleteAvatar(userId: string): Promise<IUser> {
+    const user = await userRepository.getByID(userId);
+    if (!user.avatar) {
+      throw new ApiError("User has not avatar", 400);
     }
+    await s3Service.deleteFile(user.avatar);
+    return await userRepository.putByID(user._id.toString(), {
+      avatar: null,
+    });
     return user;
   }
 }

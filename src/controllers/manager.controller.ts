@@ -1,9 +1,26 @@
 import { NextFunction, Response } from "express";
 
+import { IListingQuery } from "../interfaces/listingQuery.interface";
 import { managerService } from "../services/manager.service";
 import { AuthRequest } from "../types/authRequest.interface";
 
 class ManagerController {
+  public async softDeleteListing(
+    req: AuthRequest,
+    res: Response,
+    next: NextFunction,
+  ) {
+    try {
+      const { id } = req.params;
+
+      const result = await managerService.softDeleteListing(id);
+
+      res.json(result);
+    } catch (e) {
+      next(e);
+    }
+  }
+
   public async deleteListing(
     req: AuthRequest,
     res: Response,
@@ -70,9 +87,11 @@ class ManagerController {
     next: NextFunction,
   ) {
     try {
-      const listings = await managerService.getPendingListings();
+      const query = req.query as unknown as IListingQuery;
 
-      res.json(listings);
+      const result = await managerService.getPendingListings(query);
+
+      res.json(result);
     } catch (e) {
       next(e);
     }
