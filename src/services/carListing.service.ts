@@ -186,7 +186,7 @@ class CarListingService {
   public async deletePhoto(
     user: IUser,
     listingId: string,
-    url: string,
+    photoUrl: string,
   ): Promise<ICarListing> {
     const listing = await carListingRepository.getById(listingId);
 
@@ -195,10 +195,13 @@ class CarListingService {
     if (listing.seller.toString() !== user._id.toString()) {
       throw new ApiError("Forbidden", 403);
     }
+    if (!photoUrl) {
+      throw new ApiError("Listing has no photo to delete", 400);
+    }
 
-    await s3Service.deleteFile(url);
+    await s3Service.deleteFile(photoUrl);
 
-    return await carListingRepository.removePhoto(listingId, url);
+    return await carListingRepository.removePhoto(listingId, photoUrl);
   }
 
   public async deleteListing(user: IUser, listingId: string) {

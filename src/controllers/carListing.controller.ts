@@ -78,7 +78,7 @@ class CarListingController {
       const listing = await carListingService.deletePhoto(
         req.user!,
         req.params.id,
-        req.body.photoUrl,
+        req.body.url,
       );
 
       res.json(listing);

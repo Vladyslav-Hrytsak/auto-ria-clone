@@ -89,12 +89,12 @@ class CarListingRepository {
       if (query.priceTo) filter.priceUSD.$lte = query.priceTo;
     }
 
-    const limit = query.limit || 10; // добавил дефолты на всякий случай
+    const limit = query.limit || 10;
     const page = query.page || 1;
     const skip = limit * (page - 1);
 
     const sortOrder = query.order === OrderEnum.ASC ? 1 : -1;
-    const sortField = query.orderBy || "createdAt"; // дефолтная сортировка по дате
+    const sortField = query.orderBy || "createdAt";
     const sort = { [sortField]: sortOrder };
 
     return await Promise.all([
