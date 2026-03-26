@@ -29,7 +29,14 @@ class S3Service {
     itemId: string,
   ): Promise<string> {
     try {
+      if (!config.AWS_S3_ACCESS_KEY || !config.AWS_S3_BUCKET_NAME) {
+        console.log("📦 S3 MOCK MODE");
+
+        return `mock/${itemType}/${itemId}/${file.name}`;
+      }
+
       const filePath = this.buildPath(itemType, itemId, file.name);
+
       await this.client.send(
         new PutObjectCommand({
           Bucket: config.AWS_S3_BUCKET_NAME,
@@ -39,15 +46,21 @@ class S3Service {
           ACL: config.AWS_S3_ACL as ObjectCannedACL,
         }),
       );
+
       return filePath;
     } catch (error) {
-      throw error;
       console.error("Error upload: ", error);
+      throw error;
     }
   }
 
   public async deleteFile(filePath: string): Promise<void> {
     try {
+      if (!config.AWS_S3_ACCESS_KEY) {
+        console.log("🗑️ S3 DELETE MOCK:", filePath);
+        return;
+      }
+
       await this.client.send(
         new DeleteObjectCommand({
           Bucket: config.AWS_S3_BUCKET_NAME,

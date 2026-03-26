@@ -1,21 +1,28 @@
-import mongoose from "mongoose";
-
-import { config } from "../config/configs";
 import { Role } from "../models/role.model";
 import { User } from "../models/user.model";
 import { passwordService } from "../services/password.service";
 
-async function adminSeed() {
+export const adminSeed = async () => {
   try {
-    await mongoose.connect(config.MONGO_URL);
-    console.log("Connected to MongoDB...");
+    console.log("🌱 Start seeding...");
 
-    const adminRole = await Role.findOne({ name: "admin" });
+    // --- ROLES ---
+    let adminRole = await Role.findOne({ name: "admin" });
+    let userRole = await Role.findOne({ name: "user" });
+
     if (!adminRole) {
-      throw new Error("Role 'admin' not found. Please run role seed first.");
+      adminRole = await Role.create({ name: "admin" });
+      console.log("✅ Admin role created");
     }
 
+    if (!userRole) {
+      userRole = await Role.create({ name: "user" });
+      console.log("✅ User role created");
+    }
+
+    // --- ADMIN USER ---
     const adminEmail = "admin@gmail.com";
+
     const adminExists = await User.findOne({ email: adminEmail });
 
     if (!adminExists) {
@@ -25,20 +32,17 @@ async function adminSeed() {
         email: adminEmail,
         password: hashedPassword,
         name: "Admin",
-        phone: "+380958991590",
+        phone: "+380000000000",
         roles: [adminRole._id],
       });
 
-      console.log("✅ Admin created successfully with hashed password!");
+      console.log("✅ Admin created");
     } else {
-      console.log("ℹ️ Admin already exists in database.");
+      console.log("ℹ️ Admin already exists");
     }
+
+    console.log("🌱 Seed finished");
   } catch (error) {
     console.error("❌ Seed error:", error);
-  } finally {
-    await mongoose.connection.close();
-    process.exit(0);
   }
-}
-
-adminSeed();
+};

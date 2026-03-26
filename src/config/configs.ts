@@ -38,4 +38,6 @@ export const config = {
   AWS_S3_REGION: process.env.AWS_S3_REGION,
   AWS_S3_ACL: process.env.AWS_S3_ACL,
   AWS_S3_ENDPOINT: process.env.AWS_S3_ENDPOINT,
+
+  NODE_ENV: process.env.NODE_ENV || "development",
 };

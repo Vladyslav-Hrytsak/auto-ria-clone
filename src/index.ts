@@ -15,6 +15,7 @@ import { managerRouter } from "./routes/manager.router";
 import { profanityRouter } from "./routes/profanity.router";
 import { publicListingRouter } from "./routes/publicListing.router";
 import { userRouter } from "./routes/user.router";
+import { adminSeed } from "./seed/admin.seed";
 import { profanityService } from "./services/profanity.service";
 
 const app = express();
@@ -54,10 +55,14 @@ process.on("uncaughtException", (err: Error) => {
 const start = async () => {
   try {
     await mongoose.connect(config.MONGO_URL);
-    cronRunner();
-    await profanityService.init();
 
     console.log("MongoDB connected");
+    if (config.NODE_ENV === "development") {
+      await adminSeed();
+    }
+
+    cronRunner();
+    await profanityService.init();
 
     app.listen(config.PORT, () => {
       console.log(`Server running on http://${config.HOST}:${config.PORT}`);
