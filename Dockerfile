@@ -6,8 +6,7 @@ COPY package*.json ./
 
 ENV HUSKY=0
 
-RUN npm install
-
+RUN npx tsc
 COPY . .
 
 RUN npm run build
