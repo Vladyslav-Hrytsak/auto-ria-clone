@@ -18,6 +18,11 @@ class BrandRequestController {
       data: request,
     });
   }
+
+  public async getRequest(req: AuthRequest, res: Response) {
+    const requests = await brandRequestService.getBrandRequest();
+    res.status(201).json(requests);
+  }
 }
 
 export const brandRequestController = new BrandRequestController();

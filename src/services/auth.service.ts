@@ -30,10 +30,16 @@ class AuthService {
 
     const normalizedEmail = email.toLowerCase().trim();
 
-    const existingUser = await userRepository.findByEmail(normalizedEmail);
+    const existingEmail = await userRepository.findByEmail(normalizedEmail);
 
-    if (existingUser) {
-      throw new ApiError("User already exists", 400);
+    if (existingEmail) {
+      throw new ApiError("Email already exists", 400);
+    }
+
+    const existingPhone = await userRepository.findByPhone(phone);
+
+    if (existingPhone) {
+      throw new ApiError("Phone already exists", 400);
     }
 
     const buyerRole: IRole = await Role.findOne({ name: "buyer" });

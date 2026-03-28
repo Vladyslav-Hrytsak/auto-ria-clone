@@ -1,3 +1,5 @@
+import { Types } from "mongoose";
+
 import { ListingStatus } from "../enums/listingStatus.enum";
 import { OrderEnum } from "../enums/order.enum";
 import { ICarListing } from "../interfaces/carListing.interface";
@@ -157,10 +159,10 @@ class CarListingRepository {
     const result = await CarListing.aggregate<IPriceAggregation>([
       {
         $match: {
-          brand,
-          model,
+          brand: new Types.ObjectId(brand),
+          model: new Types.ObjectId(model),
           region,
-          status: "ACTIVE",
+          status: ListingStatus.ACTIVE,
         },
       },
       {
@@ -178,9 +180,9 @@ class CarListingRepository {
     const result = await CarListing.aggregate([
       {
         $match: {
-          brand,
-          model,
-          status: "ACTIVE",
+          brand: new Types.ObjectId(brand),
+          model: new Types.ObjectId(model),
+          status: ListingStatus.ACTIVE,
         },
       },
       {

@@ -1,3 +1,5 @@
+import { Types } from "mongoose";
+
 import { IListingView } from "../interfaces/listing-view.interface";
 import { ListingView } from "../models/listingView.model";
 
@@ -9,7 +11,9 @@ class ListingViewRepository {
   }
 
   public async countViews(listingId: string): Promise<number> {
-    return await ListingView.countDocuments({ listing: listingId });
+    return await ListingView.countDocuments({
+      listing: new Types.ObjectId(listingId),
+    });
   }
 
   public async countViewsSince(

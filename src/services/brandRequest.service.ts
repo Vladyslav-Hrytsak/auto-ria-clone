@@ -1,6 +1,7 @@
 import { EmailTypeEnum } from "../enums/email-type.enum";
 import { IBrandRequest } from "../interfaces/brand-request.interface";
 import { BrandRequest } from "../models/brandRequest.model";
+import { brandRequestRepository } from "../repositories/brandRequest.repository";
 import { userRepository } from "../repositories/user.repository";
 import { sendGridService } from "./send-grid.service";
 
@@ -38,6 +39,12 @@ class BrandRequestService {
     );
 
     return request;
+  }
+
+  public async getBrandRequest(): Promise<IBrandRequest[]> {
+    const requests = brandRequestRepository.findAll();
+
+    return await requests;
   }
 }
 

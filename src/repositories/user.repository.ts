@@ -10,6 +10,10 @@ class UserRepository {
     return await User.findOne({ email });
   }
 
+  async findByPhone(phone: string): Promise<IUser | null> {
+    return await User.findOne({ phone });
+  }
+
   async createUser(data: Partial<IUser>): Promise<IUser> {
     return await User.create(data);
   }

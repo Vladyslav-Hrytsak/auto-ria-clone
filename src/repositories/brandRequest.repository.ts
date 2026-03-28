@@ -11,8 +11,8 @@ class BrandRequestRepository {
     return await BrandRequest.findById(id);
   }
 
-  public async findAllPending(): Promise<IBrandRequest[]> {
-    return await BrandRequest.find({ status: "pending" });
+  public async findAll(): Promise<IBrandRequest[]> {
+    return await BrandRequest.find();
   }
 
   public async updateStatus(

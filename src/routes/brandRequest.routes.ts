@@ -16,4 +16,11 @@ router.post(
   brandRequestController.createRequest,
 );
 
+router.get(
+  "/",
+  authMiddleware.checkAccessToken,
+  checkPermission([Permissions.BRAND_REQUEST_MODERATE]),
+  brandRequestController.getRequest,
+);
+
 export const brandRequestRouter = router;
