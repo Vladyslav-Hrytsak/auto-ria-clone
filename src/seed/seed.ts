@@ -27,6 +27,7 @@ const rolePermissionsMap = {
   ],
 
   [RolesEnum.SELLER]: [
+    Permissions.STATS_VIEW,
     Permissions.LISTING_VIEW,
     Permissions.LISTING_CREATE,
     Permissions.LISTING_EDIT_OWN,

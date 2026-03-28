@@ -7,6 +7,7 @@ class ListingViewService {
     await CarListing.findByIdAndUpdate(listingId, {
       $inc: { viewsCount: 1 },
     });
+    await listingViewRepository.createView(listingId);
   }
 
   public async getViewsStats(listingId: string): Promise<IViewsStats> {
