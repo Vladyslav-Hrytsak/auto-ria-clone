@@ -1,9 +1,12 @@
 import { Router } from "express";
 
+import { adminController } from "../controllers/admin.controller";
 import { managerController } from "../controllers/manager.controller";
 import { Permissions } from "../enums/permissions.enum";
 import { authMiddleware } from "../middlewares/auth.middleware";
 import { checkPermission } from "../middlewares/checkPermission.middleware";
+import { validationMiddleware } from "../middlewares/validate.middelware";
+import { userQueryValidator } from "../validators/user.validator";
 
 const router = Router();
 
@@ -54,6 +57,14 @@ router.patch(
   authMiddleware.checkAccessToken,
   checkPermission([Permissions.LISTING_MODERATE]),
   managerController.changeListingStatus,
+);
+
+router.get(
+  "/get-users",
+  authMiddleware.checkAccessToken,
+  checkPermission([Permissions.VIEW_ALL_USERS]),
+  validationMiddleware.validateQuery(userQueryValidator),
+  adminController.getAllUsers,
 );
 
 export const managerRouter = router;

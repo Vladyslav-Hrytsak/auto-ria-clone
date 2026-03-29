@@ -33,7 +33,7 @@ router.patch(
 router.get(
   "/get-users",
   authMiddleware.checkAccessToken,
-  checkPermission([Permissions.ROLE_MANAGE]),
+  checkPermission([Permissions.VIEW_ALL_USERS]),
   validationMiddleware.validateQuery(userQueryValidator),
   adminController.getAllUsers,
 );

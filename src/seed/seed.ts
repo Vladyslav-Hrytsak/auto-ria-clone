@@ -24,6 +24,7 @@ const rolePermissionsMap = {
     Permissions.BRAND_REQUEST_MODERATE,
     Permissions.STATS_VIEW,
     Permissions.PROFANITY_MANAGE,
+    Permissions.VIEW_ALL_USERS,
   ],
 
   [RolesEnum.SELLER]: [

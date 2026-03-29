@@ -19,6 +19,7 @@ export enum Permissions {
   USER_UPGRADE_ACCOUNT = "user_upgrade_account",
   USER_CHANGE_ACCOUNT_TYPE_ANY = "user_change_account_type_any",
   USER_BAN = "user_ban",
+  VIEW_ALL_USERS = "view_all_users",
 
   // stats
   STATS_VIEW = "stats_view",
