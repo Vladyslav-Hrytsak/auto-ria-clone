@@ -1,0 +1,1554 @@
+{
+  "info": {
+    "_postman_id": "d708e3a7-bbdf-4ba7-8c8b-2ac1237457fd",
+    "name": "TEST NODEJS",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "50777747",
+    "_collection_link": "https://go.postman.co/collection/50777747-d708e3a7-bbdf-4ba7-8c8b-2ac1237457fd?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "auth",
+      "item": [
+        {
+          "name": "register",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.environment.set(\"accessToken\", pm.response.json().accessToken);",
+                  "pm.environment.set(\"refreshToken\", pm.response.json().refreshToken);"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"vla77.123jj@gmail.com\",\n  \"password\": \"12345\",\n  \"name\": \"Seller\",\n  \"phone\":\"+380958991590\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{local}}/auth/register",
+              "host": [
+                "{{local}}"
+              ],
+              "path": [
+                "auth",
+                "register"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "login",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.environment.set(\"accessToken\", pm.response.json().accessToken);",
+                  "pm.environment.set(\"refreshToken\", pm.response.json().refreshToken);"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@gmail.com\",\n  \"password\": \"123456\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{local}}/auth/login",
+              "host": [
+                "{{local}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "refresh",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{refreshToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{local}}/auth/refresh",
+              "host": [
+                "{{local}}"
+              ],
+              "path": [
+                "auth",
+                "refresh"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "logout",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{refreshToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"email\": \"vlad.123jj@gmail.com\", \n    \"password\": \"qwe123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{local}}/auth/logout",
+              "host": [
+                "{{local}}"
+              ],
+              "path": [
+                "auth",
+                "logout"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "logout all",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"email\": \"vlad.123jj@gmail.com\", \n    \"password\": \"qwe123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{local}}/auth/logout-all",
+              "host": [
+                "{{local}}"
+              ],
+              "path": [
+                "auth",
+                "logout-all"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "forgot-password",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"vla7700.123jj@gmail.com\"\n  }",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{local}}/auth/forgot-password",
+              "host": [
+                "{{local}}"
+              ],
+              "path": [
+                "auth",
+                "forgot-password"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "forgot-password set",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"password\": \"q553322\",\n    \"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OWMxNjNkZGI2YmViOTVlMzJiMWIzYjEiLCJyb2xlIjoiNjlhODJlZGZjNmM1MjRiY2I1Nzg0OTQ4IiwiaWF0IjoxNzc0MjgyNjE3LCJleHAiOjE3NzQzMTg2MTd9.AiAJ46MpZL_OH1GMGs5pt6lDO3klfIQJOaufxGqFufM\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{local}}/auth/forgot-password",
+              "host": [
+                "{{local}}"
+              ],
+              "path": [
+                "auth",
+                "forgot-password"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "change-password",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"vla7700.123jj@gmail.com\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{local}}/auth/forgot-password",
+              "host": [
+                "{{local}}"
+              ],
+              "path": [
+                "auth",
+                "forgot-password"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "verify",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OWMxNjNkZGI2YmViOTVlMzJiMWIzYjEiLCJyb2xlIjoiNjlhODJlZGZjNmM1MjRiY2I1Nzg0OTQ4IiwiaWF0IjoxNzc0MjgyNjE3LCJleHAiOjE3NzQzMTg2MTd9.AiAJ46MpZL_OH1GMGs5pt6lDO3klfIQJOaufxGqFufM\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{local}}/auth/verify",
+              "host": [
+                "{{local}}"
+              ],
+              "path": [
+                "auth",
+                "verify"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "car-brand",
+      "item": [
+        {
+          "name": "get-brand",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{local}}/brands",
+              "host": [
+                "{{local}}"
+              ],
+              "path": [
+                "brands"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get-carsByBrand",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{local}}/brands/models/:brandId",
+              "host": [
+                "{{local}}"
+              ],
+              "path": [
+                "brands",
+                "models",
+                ":brandId"
+              ],
+              "variable": [
+                {
+                  "key": "brandId",
+                  "value": "69c7ea034163f4312970d5f4"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "me",
+      "item": [
+        {
+          "name": "me avatar",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "packages": {},
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "avatar",
+                  "type": "file",
+                  "uuid": "73283fed-7764-4c58-bc0d-dbd92d54f9bc",
+                  "src": "postman-cloud:///1f12152b-c31e-4f20-b9fb-839024b1cbc7"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{local}}/users/me/avatar",
+              "host": [
+                "{{local}}"
+              ],
+              "path": [
+                "users",
+                "me",
+                "avatar"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "account-type",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{local}}/users/me/account-type",
+              "host": [
+                "{{local}}"
+              ],
+              "path": [
+                "users",
+                "me",
+                "account-type"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "me avatar delete",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{local}}/users/me/delete-avatar",
+              "host": [
+                "{{local}}"
+              ],
+              "path": [
+                "users",
+                "me",
+                "delete-avatar"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "delete me",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{local}}/users/me/delete",
+              "host": [
+                "{{local}}"
+              ],
+              "path": [
+                "users",
+                "me",
+                "delete"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "delete my listing",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{local}}/users/me/delete-listing/:id",
+              "host": [
+                "{{local}}"
+              ],
+              "path": [
+                "users",
+                "me",
+                "delete-listing",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "69c7e5c04163f4312970d513"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "listing",
+      "item": [
+        {
+          "name": "listings update",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n\"title\": \"Toyota rav 4\",\n    \"seller\": \"69c6d2174163f4312970d466\",\n    \"brand\": \"69aefffc14cb99cd9a7e86fe\",\n    \"model\": \"69aefffc14cb99cd9a7e8702\",\n    \"year\": 2018,\n    \"price\": 18300,\n  \"description\": \" perfect condition\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{local}}/listings/69c7e5c04163f4312970d513",
+              "host": [
+                "{{local}}"
+              ],
+              "path": [
+                "listings",
+                "69c7e5c04163f4312970d513"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "listings get stats",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{local}}/listings/stats/:id",
+              "host": [
+                "{{local}}"
+              ],
+              "path": [
+                "listings",
+                "stats",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "69c8159bf73b0df440f2573b"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "listings create",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"matiz\",\n  \"brand\": \"69c5c7fe89475023468d6b6c\",\n  \"model\": \"69c5c7fe89475023468d6b70\",\n  \"year\": 2016,\n  \"price\": 2530,\n  \"currency\": \"USD\",\n  \"region\": \"Kolomuya\",\n  \"city\": \"Kolomuya\",\n  \"description\": \"Good car, ukrain registration\"\n}\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{local}}/listings",
+              "host": [
+                "{{local}}"
+              ],
+              "path": [
+                "listings"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "listings-photos",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "photos",
+                  "type": "file",
+                  "uuid": "79557452-b6e2-4d11-bd9c-622ffcead8db",
+                  "src": [
+                    "postman-cloud:///1f12152c-1447-4500-8cdd-e8eb0426a1d7",
+                    "postman-cloud:///1f12152b-c31e-4f20-b9fb-839024b1cbc7",
+                    "postman-cloud:///1f12152b-67c4-4b70-aaa0-cf5a3abb7874"
+                  ]
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{local}}/listings/:id/photos",
+              "host": [
+                "{{local}}"
+              ],
+              "path": [
+                "listings",
+                ":id",
+                "photos"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "69c7e5c04163f4312970d513"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "listings-photos DELETE",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"url\":\"listing/69c7e5c04163f4312970d513/4a66e806-1d82-49f4-8198-81716ed1f699.jpg\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{local}}/listings/:id/photos",
+              "host": [
+                "{{local}}"
+              ],
+              "path": [
+                "listings",
+                ":id",
+                "photos"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "69c7e5c04163f4312970d513"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "admin endpoint",
+      "item": [
+        {
+          "name": "assign-manager",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": ""
+            },
+            "url": {
+              "raw": "{{local}}/admin//:id/assign-manager",
+              "host": [
+                "{{local}}"
+              ],
+              "path": [
+                "admin",
+                "",
+                ":id",
+                "assign-manager"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "69c7e89f4163f4312970d5b7"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "delete-manager",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": ""
+            },
+            "url": {
+              "raw": "{{local}}/admin/:id/delete-manager",
+              "host": [
+                "{{local}}"
+              ],
+              "path": [
+                "admin",
+                ":id",
+                "delete-manager"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "69c7e5754163f4312970d4fa"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "change-account-type",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "{{local}}/admin/:id/change-account-type",
+              "host": [
+                "{{local}}"
+              ],
+              "path": [
+                "admin",
+                ":id",
+                "change-account-type"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "69c7e5754163f4312970d4fa"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get-users",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": ""
+            },
+            "url": {
+              "raw": "{{local}}/admin/get-users",
+              "host": [
+                "{{local}}"
+              ],
+              "path": [
+                "admin",
+                "get-users"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "brands-request",
+      "item": [
+        {
+          "name": "brand-requests",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n \"brand\":\"Kia\",\n \"model\":\"Rio\",\n \"message\":\"pls add this car\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{local}}/brand-requests",
+              "host": [
+                "{{local}}"
+              ],
+              "path": [
+                "brand-requests"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "brand-requests",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n \"brand\":\"Lanos\",\n \"model\":\"Lanos\",\n \"message\":\"pls add this car\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{local}}/brand-requests",
+              "host": [
+                "{{local}}"
+              ],
+              "path": [
+                "brand-requests"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "public endpoint",
+      "item": [
+        {
+          "name": "listings get",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{local}}/publicListing",
+              "host": [
+                "{{local}}"
+              ],
+              "path": [
+                "publicListing"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "listings by id",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{local}}/publicListing/:id",
+              "host": [
+                "{{local}}"
+              ],
+              "path": [
+                "publicListing",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "69c8159bf73b0df440f2573b"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "manager",
+      "item": [
+        {
+          "name": "soft delete listing",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{local}}/manager/soft/listings/:id",
+              "host": [
+                "{{local}}"
+              ],
+              "path": [
+                "manager",
+                "soft",
+                "listings",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "69c56402dc1f5c83cdd3c1e4"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "delete listing",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{local}}/manager/listings/:id",
+              "host": [
+                "{{local}}"
+              ],
+              "path": [
+                "manager",
+                "listings",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "69c56402dc1f5c83cdd3c1e4"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "ban users",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "{{local}}/manager/users/:id/ban",
+              "host": [
+                "{{local}}"
+              ],
+              "path": [
+                "manager",
+                "users",
+                ":id",
+                "ban"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "69b82f8874e8976c488103d6"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "unban users",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "{{local}}/manager/users/:id/unban",
+              "host": [
+                "{{local}}"
+              ],
+              "path": [
+                "manager",
+                "users",
+                ":id",
+                "unban"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "69b82f8874e8976c488103d6"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "brand-request",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"status\":\"APPROVED\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{local}}/manager/brand-requests/:id",
+              "host": [
+                "{{local}}"
+              ],
+              "path": [
+                "manager",
+                "brand-requests",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "69c571929a307e51e0c8f82b"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get pending listings",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{local}}/manager/listings/pending",
+              "host": [
+                "{{local}}"
+              ],
+              "path": [
+                "manager",
+                "listings",
+                "pending"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "listings status",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"status\":\"DELETED\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{local}}/manager/listings/:id/status",
+              "host": [
+                "{{local}}"
+              ],
+              "path": [
+                "manager",
+                "listings",
+                ":id",
+                "status"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "69b1ffc1676f287b980c5d25"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get-users",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": ""
+            },
+            "url": {
+              "raw": "{{local}}/manager/get-users",
+              "host": [
+                "{{local}}"
+              ],
+              "path": [
+                "manager",
+                "get-users"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "contact",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{accessToken}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"message\": \"Message is too short\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{local}}/contact/:listingId",
+          "host": [
+            "{{local}}"
+          ],
+          "path": [
+            "contact",
+            ":listingId"
+          ],
+          "variable": [
+            {
+              "key": "listingId",
+              "value": "69c7e9354163f4312970d5d3"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "profanity",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{accessToken}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n\"word\":\"mudak\"\n}\n",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{local}}/profanity/add",
+          "host": [
+            "{{local}}"
+          ],
+          "path": [
+            "profanity",
+            "add"
+          ]
+        }
+      },
+      "response": []
+    }
+  ]
+}
