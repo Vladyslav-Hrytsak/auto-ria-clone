@@ -46,39 +46,52 @@ const rolePermissionsMap = {
 };
 
 const seed = async () => {
-  await mongoose.connect(MONGO_URL);
+  try {
+    await mongoose.connect(MONGO_URL);
+    console.log("🚀 Connected to DB");
+    await Permission.deleteMany({});
+    await RolePermission.deleteMany({});
+    console.log("🧹 Cleaned Permissions and RolePermissions");
+    const permissionDocs = await Promise.all(
+      Object.values(Permissions).map((name) => Permission.create({ name })),
+    );
+    console.log(`✅ Created ${permissionDocs.length} permissions`);
 
-  console.log("Connected to DB");
+    for (const roleName of Object.values(RolesEnum)) {
+      const role = await Role.findOneAndUpdate(
+        { name: roleName },
+        { name: roleName },
+        { upsert: true, new: true },
+      );
 
-  await Permission.deleteMany({});
-  await RolePermission.deleteMany({});
+      const requestedPermNames =
+        rolePermissionsMap[roleName as RolesEnum] || [];
 
-  for (const perm of Object.values(Permissions)) {
-    await Permission.create({ name: perm });
-  }
+      const permsForThisRole = permissionDocs.filter((p) =>
+        requestedPermNames.includes(p.name as Permissions),
+      );
 
-  for (const roleName of Object.values(RolesEnum)) {
-    let role = await Role.findOne({ name: roleName });
-
-    if (!role) {
-      role = await Role.create({ name: roleName });
-    }
-
-    const perms = rolePermissionsMap[roleName];
-
-    for (const permName of perms) {
-      const perm = await Permission.findOne({ name: permName });
-
-      await RolePermission.create({
+      const rolePermissionEntries = permsForThisRole.map((p) => ({
         role: role._id,
-        permission: perm!._id,
-      });
+        permission: p._id,
+      }));
+
+      if (rolePermissionEntries.length > 0) {
+        await RolePermission.insertMany(rolePermissionEntries);
+      }
+
+      console.log(
+        `🎭 Role [${roleName}] updated with ${rolePermissionEntries.length} permissions`,
+      );
     }
+
+    console.log("✨ SEED FINISHED SUCCESSFULLY");
+  } catch (error) {
+    console.error("❌ SEED ERROR:", error);
+    process.exit(1);
+  } finally {
+    await mongoose.disconnect();
+    console.log("🔌 Disconnected from DB");
   }
-
-  console.log("SEED FINISHED");
-
-  await mongoose.disconnect();
 };
-
 seed();
