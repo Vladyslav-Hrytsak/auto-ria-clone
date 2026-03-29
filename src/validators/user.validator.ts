@@ -1,4 +1,7 @@
 import Joi from "joi";
+import {OrderEnum} from "../enums/order.enum";
+import {AccountType} from "../enums/accountType.enum";
+import {UserOrderByEnum} from "../enums/user-order-by.enum";
 
 export const registerValidator = Joi.object({
   email: Joi.string()
@@ -97,4 +100,20 @@ export const forgotPasswordValidator = Joi.object({
 
 export const deletePhotoValidator = Joi.object({
   url: Joi.string().required(),
+});
+
+export const userQueryValidator = Joi.object({
+  limit: Joi.number().min(1).max(100).default(10),
+  page: Joi.number().min(1).default(1),
+
+  search: Joi.string().trim().lowercase(),
+  accountType: Joi.string().valid(...Object.values(AccountType)),
+  isBanned: Joi.boolean(),
+
+  order: Joi.string()
+    .valid(...Object.values(OrderEnum))
+    .default(OrderEnum.DESC),
+  orderBy: Joi.string()
+    .valid(...Object.values(UserOrderByEnum))
+    .default(UserOrderByEnum.CREATED_AT),
 });

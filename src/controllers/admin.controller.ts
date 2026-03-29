@@ -1,5 +1,6 @@
-import { NextFunction, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 
+import { IUsersQuery } from "../interfaces/usersQuery.interface";
 import { adminService } from "../services/admin.service";
 import { AuthRequest } from "../types/authRequest.interface";
 
@@ -45,6 +46,18 @@ class AdminController {
       const { id } = req.params;
 
       const result = await adminService.changeAccountType(id);
+
+      res.json(result);
+    } catch (e) {
+      next(e);
+    }
+  }
+
+  public async getAllUsers(req: Request, res: Response, next: NextFunction) {
+    try {
+      const query = req.query as unknown as IUsersQuery;
+
+      const result = await adminService.getAllUsers(query);
 
       res.json(result);
     } catch (e) {

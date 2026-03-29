@@ -3,6 +3,7 @@ import { AccountType } from "../enums/accountType.enum";
 import { EmailTypeEnum } from "../enums/email-type.enum";
 import { RolesEnum } from "../enums/roles.enum";
 import { ApiError } from "../errors/api-error";
+import { IUsersQuery } from "../interfaces/usersQuery.interface";
 import { roleRepository } from "../repositories/role.repository";
 import { userRepository } from "../repositories/user.repository";
 import { sendGridService } from "./send-grid.service";
@@ -81,6 +82,18 @@ class AdminService {
     return {
       message: "Account type updated",
       accountType: user.accountType,
+    };
+  }
+
+  public async getAllUsers(query: IUsersQuery) {
+    const [data, total] = await userRepository.getAllUsers(query);
+
+    return {
+      data,
+      total,
+      page: Number(query.page),
+      limit: Number(query.limit),
+      totalPages: Math.ceil(total / query.limit),
     };
   }
 }
