@@ -1,390 +1,285 @@
 # 🚗 DriveUA Car Marketplace API
 
-## 📌 Project Overview
+## 📌 Огляд проєкту
 
-DriveUA is a backend API for a car marketplace platform (similar to AutoRia).
-It allows users to create, manage, and browse car listings with role-based access control, moderation, and media handling.
+**DriveUA** — це масштабований backend API для платформи продажу автомобілів (аналог AutoRia), спроєктований з урахуванням високого навантаження, гнучкої системи доступів та автоматизації бізнес-процесів.
 
----
-
-## ⚙️ Tech Stack
-
-* Node.js
-* Express
-* TypeScript
-* MongoDB + Mongoose
-* AWS S3 (file storage)
-* SendGrid (email service)
-* JWT (authentication)
-* Cron jobs
+Система дозволяє користувачам створювати, керувати та переглядати оголошення про продаж автомобілів із підтримкою ролей, модерації, аналітики та роботи з медіа.
 
 ---
 
-## 🏗 Project Structure
+## 🚀 Основні переваги
 
-```
+### 🔐 Гнучка система доступу (RBAC)
+
+* Реалізована система ролей та пермішинів
+* Легке масштабування (додавання нових ролей, наприклад автосалонів)
+* Чітке розмежування доступу до функціоналу
+
+---
+
+### ⚙️ Автоматизація процесів
+
+* Інтеграція з **PrivatBank API** для актуальних курсів валют
+* Автоматична фільтрація нецензурної лексики
+* Фонові процеси (cron jobs) для підтримки системи
+
+---
+
+### ☁️ Готовність до продакшену
+
+* Повна контейнеризація через Docker
+* Оптимізовано для деплою в AWS
+* Масштабована архітектура
+
+---
+
+## 🏗 Структура проєкту
+
+
+```text
 src/
-├── config/        # configuration files
-├── constants/     # constants
-├── controllers/   # route controllers
-├── crons/         # scheduled jobs
-├── enums/         # enums
-├── errors/        # custom error classes
-├── helper/        # helper functions
-├── interfaces/    # TypeScript interfaces
-├── middlewares/   # middleware logic
-├── models/        # Mongoose models
-├── presenters/    # response formatting
-├── repositories/  # database layer
-├── routes/        # API routes
-├── seed/          # database seed scripts
-├── services/      # business logic
-├── types/         # custom types
-├── validators/    # request validation
-└── index.ts       # application entry point
+├── config/        # Конфігурація (Env, AWS S3, MongoDB)
+├── constants/     # Глобальні константи та регулярні вирази
+├── controllers/   # Обробка HTTP запитів (Entry Point для маршрутів)
+├── crons/         # Планові задачі (оновлення валют через PrivatBank, очистка токенів)
+├── enums/         # Переліки (Roles, Permissions, AccountTypes, ListingStatus)
+├── errors/        # Кастомні класи помилок (ApiError)
+├── helper/        # Допоміжні утиліти (генерація токенів, робота з паролями)
+├── interfaces/    # TypeScript інтерфейси
+├── middlewares/   # Auth, RBAC, перевірка банів, завантаження файлів
+├── models/        # Mongoose схеми (User, Listing, Role, Token тощо)
+├── presenters/    # Форматування відповідей API (Response DTOs)
+├── repositories/  # Шар доступу до бази даних (Data Access Layer)
+├── routes/        # Визначення API ендпоінтів
+├── seed/          # Скріпти для початкового наповнення бази (Roles, Admin)
+├── services/      # Основна бізнес-логіка (профільтрація матів, ліміти оголошень)
+├── types/         # Кастомні типи TypeScript
+├── validators/    # Валідація вхідних даних (Joi схеми)
+└── index.ts       # Точка входу в додаток
 ```
 
 ---
 
-## 🚀 Getting Started
+## 🚀 Швидкий старт
 
-### 1. Install dependencies
+### 1. Налаштування середовища
 
+Створи `.env` файл на основі `.env.example`:
+
+```bash
+cp .env.example .env
 ```
-npm install
+
+> ⚠️ Примітка: навіть без реальних AWS або SendGrid ключів система буде працювати для локального тестування
+
+---
+
+### 2. Запуск через Docker (рекомендовано)
+
+```bash
+docker-compose up -d --build
 ```
+Проєкт можна тестувати як на віддаленому сервері, так і локально:
+* **Production (AWS):** `http://16.16.185.104:3000`
+* **Local (Docker):** `http://localhost:3000`
 
-### 2. Setup environment variables
 
-Create a `.env` file based on `.env.example`:
+---
 
-```
-PORT=
-HOST=
+## 🗄 Наповнення бази (Seeding)
 
-MONGO_URL=
+Для коректного тестування (ролі, пагінація, аналітика) виконай:
 
-JWT_ACCESS_SECRET=
-JWT_ACCESS_EXPIRATION=
-JWT_REFRESH_SECRET=
-JWT_REFRESH_EXPIRATION=
+### 1. Створення ролей та пермішинів
 
-MAX_SESSIONS=
-
-ACTION_FORGOT_PASSWORD_SECRET=
-ACTION_FORGOT_PASSWORD_EXPIRATION=
-ACTION_VERIFY_SECRET=
-ACTION_VERIFY_EXPIRATION=
-ACTION_DELETE_SECRET=
-ACTION_DELETE_EXPIRATION=
-
-FRONT_URL=
-FRONT_URL_OLD_VISIT=
-
-PRIVAT_BANK_API=
-
-SENDGRID_API_KEY=
-SEND_GRID_TO_EMAIL=
-
-AWS_S3_ACCESS_KEY=
-AWS_S3_SECRET_KEY=
-AWS_S3_BUCKET_NAME=
-AWS_S3_REGION=
-AWS_S3_ACL=
-AWS_S3_ENDPOINT=
-
-MANAGER_EMAIL=
+```bash
+docker-compose exec app npm run seed
 ```
 
 ---
 
-### 3. Run the project
+### 2. Створення адміністратора
 
-Development:
-
-```
-npm run dev
+```bash
+docker-compose exec app npm run seed:admin
 ```
 
-Production:
+Дані для входу:
 
 ```
-npm run build
-npm start
+Email: admin@gmail.com
+Password: 123456
 ```
 
 ---
 
-## 🔐 Authentication & Authorization
+### 3. Генерація тестових оголошень
 
-The system uses JWT authentication with:
-
-* Access token
-* Refresh token
-
-### Roles:
-
-* `buyer`
-* `seller`
-* `manager`
-* `admin`
-
-⚠️ Important:
-
-* Users are assigned roles explicitly (no default forced role like "seller")
-* Permissions are managed via RBAC (Role-Based Access Control)
-
----
-
-## 🔑 Core Features
-
-### 👤 Authentication
-
-* Register
-* Login
-* Refresh tokens
-* Logout (single & all sessions)
-* Email verification
-* Password reset
-
----
-
-### 🚗 Listings
-
-#### Seller capabilities:
-
-* Create listing
-* Update listing (max 3 attempts if profanity detected)
-* Delete listing
-* Upload photos
-* Delete photos
-
-#### Public access:
-
-* View all listings
-* View single listing
-
----
-
-### 🧠 Profanity Filter (According to Requirements)
-
-* All text fields are checked
-* On create:
-
-    * If profanity found → request is rejected
-* On update:
-
-    * Up to 3 attempts allowed
-    * After 3 failed attempts → listing becomes `INACTIVE`
-    * Manager is notified
-
----
-
-### 📸 File Upload (AWS S3)
-
-* Images stored in S3
-* Multiple images per listing
-* Only listing owner can:
-
-    * upload images
-    * delete images
-
----
-
-### 💱 Currency Conversion
-
-* Uses PrivatBank API
-* Stores:
-
-    * UAH / USD / EUR prices
-    * exchangeRateDate
-
-### Cron job:
-
-* Updates exchange rates daily
-
----
-
-### 📧 Email Notifications (SendGrid)
-
-Used for:
-
-* Registration
-* Email verification
-* Password reset
-* Listing moderation events
-* Contact seller
-
----
-
-### 📩 Contact Seller
-
-* Buyer can contact seller via platform
-* Email is sent through SendGrid
-* Seller's email is not exposed directly
-
----
-
-### 🛡 Moderation (Manager)
-
-* Delete listings
-* Ban users
-* Change listing status
-* Moderate brand requests
-
----
-
-## 🔄 Middleware Execution Order
-
-```
-authMiddleware
-→ banMiddleware
-→ checkPermission
-→ controller
+```bash
+docker-compose exec app npm run seed:listings
 ```
 
----
+✔ Створює 50+ оголошень для тестування:
 
-## 🔒 Security
-
-* Role-based access control (RBAC)
-* Ownership validation
-* File validation (type, size)
-* JWT authentication
-* Session limit
-* Input validation
-* Protected routes
+* пагінації
+* фільтрів
+* пошуку
 
 ---
 
-## ⏱ Cron Jobs
+## 🔐 Ролі та типи акаунтів
 
-Implemented:
+### 👥 Система ролей (RBAC)
 
-* Currency update
-* Expired token cleanup
-* Old password cleanup
-* Inactive user email reminders
+* **Buyer**
+
+    * Перегляд оголошень
+    * Контакт з продавцем
+
+* **Seller**
+
+    * Створення та управління оголошеннями
+    * Обмеження залежать від типу акаунту
+
+* **Manager**
+
+    * Модерація контенту
+    * Видалення оголошень
+    * Бан користувачів
+
+* **Admin**
+
+    * Повний доступ до системи
+    * Управління менеджерами
 
 ---
 
-## 📬 API Usage (Postman)
+### 💳 Типи акаунтів
 
-### Authorization header:
+#### 🟢 Base (Базовий)
+
+* Безкоштовний
+* Ліміт: **1 оголошення**
+* Без доступу до аналітики
+
+#### 🔵 Premium (Преміум)
+
+* Безліміт на оголошення
+* Доступ до аналітики:
+
+    * перегляди (день / тиждень / місяць)
+    * середня ціна по регіону
+    * середня ціна по Україні
+
+---
+
+## 🔑 Ключовий функціонал
+
+### 🧠 Фільтр нецензурної лексики
+
+* Перевіряє всі текстові поля
+* Працює при створенні та редагуванні
+
+**Правило 3-х спроб:**
+
+* після 3 невдалих спроб виправлення
+* оголошення стає **INACTIVE**
+* відправляється на модерацію
+
+---
+
+### 💱 Робота з валютами
+
+* Підтримка:
+
+    * UAH
+    * USD
+    * EUR
+
+* Автоматичний перерахунок цін
+
+* Використовується курс **PrivatBank**
+
+**Cron Job:**
+
+* оновлення курсів щодня
+* збереження історичного курсу
+
+---
+
+### 📊 Аналітика (Premium)
+
+* Перегляди оголошення:
+
+    * загальні
+    * по періодах
+
+* Аналітика ринку:
+
+    * середня ціна по області
+    * середня ціна по Україні
+
+---
+
+### 📸 Медіа та повідомлення
+
+#### AWS S3
+
+* Зберігання фотографій у хмарі
+* Контроль доступу до файлів
+* Тільки власник або менеджер може видаляти
+
+#### SendGrid
+
+* Автоматичні email-повідомлення:
+
+    * реєстрація
+    * зміна статусу оголошення
+    * звернення покупців
+
+---
+
+## 📬 Тестування (Postman)
+
+📁 Колекція:
 
 ```
-Authorization: Bearer <access_token>
+/postman/TEST_NODEJS.postman_collection.json
 ```
 
-### Example endpoints:
+### Як тестувати:
 
-#### Auth:
+1. Імпортувати колекцію в Postman
+2. Встановити змінну:
 
-* `POST /auth/register`
-* `POST /auth/login`
-* `POST /auth/refresh`
+```
+http://localhost:3000
+```
 
-#### Listings:
+3. Використовувати готові скрипти:
 
-* `POST /listings`
-* `PATCH /listings/:id`
-* `GET /listings`
-* `GET /listings/:id`
-
-#### Photos:
-
-* `POST /listings/:id/photos`
-* `DELETE /listings/:id/photos`
+* автоматичне оновлення `accessToken`
 
 ---
 
-## 🐳 Docker Setup
+## 📊 Статус проєкту
 
-### Dockerfile
-
-```
-FROM node:20
-
-WORKDIR /app
-
-COPY package*.json ./
-RUN npm install
-
-COPY . .
-
-RUN npm run build
-
-CMD ["node", "dist/index.js"]
-```
+* ✅ JWT авторизація (Access + Refresh)
+* ✅ RBAC система (Roles & Permissions)
+* ✅ Пагінація / Пошук / Фільтрація
+* ✅ Автоматична модерація (Strike System)
+* ✅ Інтеграція з PrivatBank API
+* ✅ Docker контейнеризація
 
 ---
 
-### docker-compose.yml
+## 📌 Висновок
 
-```
-version: "3.9"
+**DriveUA** побудований з акцентом на:
 
-services:
-  app:
-    build: .
-    ports:
-      - "5000:5000"
-    env_file:
-      - .env
-    depends_on:
-      - mongo
+* масштабованість
+* чисту архітектуру
+* легкість розширення
 
-  mongo:
-    image: mongo
-    ports:
-      - "27017:27017"
-```
-
----
-
-### Run with Docker
-
-```
-docker-compose up --build
-```
-
----
-
-## ☁️ AWS Usage
-
-Currently implemented:
-
-* S3 (file storage)
-
-Can be extended with:
-
-* EC2 (hosting)
-* RDS (database)
-* CloudFront (CDN)
-
----
-
-## 📊 Project Status
-
-✅ Authentication system
-✅ RBAC authorization
-✅ Listings management
-✅ Image upload (S3)
-✅ Email service (SendGrid)
-✅ Cron jobs
-✅ Profanity filter
-✅ Clean architecture
-
----
-
-## 📌 Final Notes
-
-This project follows a scalable backend architecture with clear separation of concerns:
-
-* Controllers → handle HTTP layer
-* Services → business logic
-* Repositories → data access
-
-It is production-ready and can be extended further.
-
----
+Проєкт легко адаптується під нові бізнес-вимоги та готовий до використання в продакшені 🚀
